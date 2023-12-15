@@ -14,7 +14,7 @@ function handleToggleMenuVisibility(isMenuVisible: boolean): void {
   <header>
     <BaseNavigation @toggle-menu-visibility="handleToggleMenuVisibility" />
   </header>
-  <div class="py-6" :class="[shouldContentHavePadding ? 'md:pl-64' : 'md:pl-0']">
+  <div :class="[shouldContentHavePadding ? 'md:pl-56' : 'md:pl-0']">
     <RouterView />
   </div>
 </template>
