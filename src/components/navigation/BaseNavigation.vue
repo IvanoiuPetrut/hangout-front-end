@@ -3,11 +3,15 @@ import { ref } from 'vue'
 import TopNavigation from '@components/navigation/TopNavigation.vue'
 import LeftMenu from '@components/navigation/LeftMenu.vue'
 
+const emit = defineEmits<{
+  (e: 'toggleMenuVisibility', isMenuVisible: boolean): void
+}>()
+
 const isMenuVisible = ref(false)
 
 function handleToggleMenuVisibility(): void {
   isMenuVisible.value = !isMenuVisible.value
-  console.log(isMenuVisible.value)
+  emit('toggleMenuVisibility', isMenuVisible.value)
 }
 </script>
 
