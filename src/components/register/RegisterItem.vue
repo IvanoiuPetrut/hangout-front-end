@@ -18,14 +18,18 @@
       required
       for="passowrd"
     />
-    <label class="label"
-      ><button class="label-text-alt link link-hover">Forgot password?</button></label
-    >
   </div>
-  <div class="form-control mt-6"><button class="btn btn-primary">Login</button></div>
-  <RouterLink :to="{ name: 'register' }" class="block mt-4">
-    <span class="label-text-alt link link-hover text-sm"
-      >Need account? <strong>Register</strong></span
+  <div class="form-control">
+    <label class="label" for="confirm-passowrd"
+      ><span class="label-text">Confirm password</span></label
     >
-  </RouterLink>
+    <input
+      type="password"
+      placeholder="Re-enter password"
+      class="input input-bordered input-primary"
+      required
+      for="confirm-passowrd"
+    />
+  </div>
+  <div class="form-control mt-6"><button class="btn btn-primary">Register</button></div>
 </template>
