@@ -5,7 +5,26 @@ import BaseAvatar from '@components/navigation/data_display/BaseAvatar.vue'
 <template>
   <ul class="menu bg-base-200 w-56 gap-4">
     <li>
-      <a>
+      <RouterLink :to="{ name: 'home' }">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
+        </svg>
+        Home
+      </RouterLink>
+    </li>
+    <li>
+      <RouterLink :to="{ name: 'friends' }">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5"
@@ -21,7 +40,7 @@ import BaseAvatar from '@components/navigation/data_display/BaseAvatar.vue'
           />
         </svg>
         Friends
-      </a>
+      </RouterLink>
     </li>
     <li>
       <a>

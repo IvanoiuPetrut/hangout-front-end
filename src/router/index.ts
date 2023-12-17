@@ -23,9 +23,10 @@ const router = createRouter({
       component: RegisterView
     },
     {
-      path: '/friends/:friendId',
+      path: '/friends/:friendId?',
       name: 'friends',
-      component: FriendsView
+      component: FriendsView,
+      props: true
     }
   ]
 })
