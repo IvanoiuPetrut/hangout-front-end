@@ -9,3 +9,8 @@ export type AccessTokens = {
   refreshToken: string;
   expiresIn: number;
 };
+
+export type UserDetails = {
+  username: string;
+  photo: string;
+};

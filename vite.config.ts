@@ -13,7 +13,8 @@ export default defineConfig({
       "@views": fileURLToPath(new URL("./src/views", import.meta.url)),
       "@types": fileURLToPath(new URL("./src/types", import.meta.url)),
       "@services": fileURLToPath(new URL("./src/services", import.meta.url)),
-      "@helpers": fileURLToPath(new URL("./src/helpers", import.meta.url))
+      "@helpers": fileURLToPath(new URL("./src/helpers", import.meta.url)),
+      "@stores": fileURLToPath(new URL("./src/stores", import.meta.url))
     }
   }
 });

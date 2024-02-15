@@ -3,6 +3,7 @@ import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import FriendsView from "@/views/FriendsView.vue";
+import UserSettingsView from "@/views/UserSettingsView.vue";
 
 import { doesUserHaveAccessCookie } from "@/helpers/user";
 
@@ -30,6 +31,11 @@ const router = createRouter({
       component: FriendsView,
       props: true,
       meta: { requiresAuth: true }
+    },
+    {
+      path: "/user-settings",
+      name: "user-settings",
+      component: UserSettingsView
     }
   ]
 });

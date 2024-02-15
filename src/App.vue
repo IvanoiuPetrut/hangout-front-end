@@ -10,6 +10,10 @@ import BaseNavigation from "@components/navigation/BaseNavigation.vue";
 import { getUserTokens } from "@services/user/auth";
 import { setCookie, getCookie } from "@helpers/cookie";
 
+import { getUserDetails } from "@services/user/userInteractor";
+
+import { useUserStore } from "@stores/user";
+
 const shouldContentHavePadding = ref(false);
 
 function handleToggleMenuVisibility(isMenuVisible: boolean): void {
@@ -38,14 +42,11 @@ onMounted(async () => {
 
     if (!accesCookie) {
       window.location.href = import.meta.env.VITE_COGNITO_LOGIN_URL as string;
-    } else {
-      const expiresCookie = getCookie("expires_in");
-      const refreshTokenCookie = getCookie("refresh_token");
-      //check if token is still valid -> yes -> continue to app
-
-      //check if token is still valid -> no -> push him to login page
     }
   }
+
+  const userDetails = await getUserDetails();
+  useUserStore().setUserDetails(userDetails.username, userDetails.photo);
 });
 </script>
 

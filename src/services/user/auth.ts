@@ -4,7 +4,7 @@ import type { AccessTokens } from "@/types/types.ts";
 
 async function getUserTokens(code: string): Promise<AccessTokens> {
   const response = await axios.post(
-    `${import.meta.env.VITE_COGNITO_URL}/token`,
+    `${import.meta.env.VITE_COGNITO_URL}/oauth2/token`,
     `grant_type=authorization_code&client_id=${
       import.meta.env.VITE_COGNITO_CLIENT_ID
     }&code=${code}&redirect_uri=${import.meta.env.VITE_COGNITO_REDIRECT_URI}`,

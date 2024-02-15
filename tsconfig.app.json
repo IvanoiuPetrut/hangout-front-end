@@ -11,7 +11,8 @@
       "@views/*": ["./src/views/*"],
       "@types/*": ["./src/types/*"],
       "@services/*": ["./src/services/*"],
-      "@helpers/*": ["./src/helpers/*"]
+      "@helpers/*": ["./src/helpers/*"],
+      "@stores/*": ["./src/stores/*"]
     }
   }
 }

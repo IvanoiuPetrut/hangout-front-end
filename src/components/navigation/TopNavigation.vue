@@ -1,11 +1,19 @@
 <script setup lang="ts">
+import { deleteCookie } from "@helpers/cookie";
+
 defineProps<{
-  friendName: string
-}>()
+  friendName: string;
+}>();
 
 const emit = defineEmits<{
-  (e: 'toggleMenuVisibility'): void
-}>()
+  (e: "toggleMenuVisibility"): void;
+}>();
+
+function logOutUser() {
+  deleteCookie("access_token");
+  deleteCookie("expires_in");
+  deleteCookie("refresh_token");
+}
 </script>
 
 <template>
