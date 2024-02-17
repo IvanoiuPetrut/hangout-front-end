@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import TopNavigation from '@components/navigation/TopNavigation.vue'
-import LeftMenu from '@components/navigation/LeftMenu.vue'
+import { ref } from "vue";
+import TopNavigation from "@components/navigation/TopNavigation.vue";
+import LeftMenu from "@components/navigation/LeftMenu.vue";
 
 const emit = defineEmits<{
-  (e: 'toggleMenuVisibility', isMenuVisible: boolean): void
-}>()
+  (e: "toggleMenuVisibility", isMenuVisible: boolean): void;
+}>();
 
-const isMenuVisible = ref(false)
+const isMenuVisible = ref(false);
 
 function handleToggleMenuVisibility(): void {
-  isMenuVisible.value = !isMenuVisible.value
-  emit('toggleMenuVisibility', isMenuVisible.value)
+  isMenuVisible.value = !isMenuVisible.value;
+  emit("toggleMenuVisibility", isMenuVisible.value);
 }
 </script>
 
@@ -20,11 +20,11 @@ function handleToggleMenuVisibility(): void {
     <TopNavigation
       :friend-name="'Some random name'"
       @toggle-menu-visibility="handleToggleMenuVisibility"
-      class="relative"
+      class="relative border-b-2 border-neutral"
     />
   </nav>
   <LeftMenu
-    class="z-50 absolute transition-all h-[calc(100%-4rem)]"
+    class="z-50 absolute transition-all h-[calc(100%-4rem)] border-r-2 border-neutral"
     :class="[isMenuVisible ? 'left-0' : '-left-full']"
   />
 </template>

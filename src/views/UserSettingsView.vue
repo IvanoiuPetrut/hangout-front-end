@@ -37,6 +37,6 @@ import { useUserStore } from "@/stores/user";
         <input type="file" class="file-input file-input-bordered file-input-xs w-full max-w-xs" />
       </div>
     </div>
-    <button class="btn btn-primary btn-wide">Save</button>
+    <button class="btn btn-primary btn-wide">Save settings</button>
   </div>
 </template>
