@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseAvatar from '@components/navigation/data_display/BaseAvatar.vue'
+import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
 </script>
 
 <template>
@@ -8,16 +8,14 @@ import BaseAvatar from '@components/navigation/data_display/BaseAvatar.vue'
       <RouterLink :to="{ name: 'home' }">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-5 h-5"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 10V3L4 14h7v7l9-11h-7z"
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
           />
         </svg>
         Home
@@ -27,58 +25,50 @@ import BaseAvatar from '@components/navigation/data_display/BaseAvatar.vue'
       <RouterLink :to="{ name: 'friends' }">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-5 h-5"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 0 0-1.588-3.755 4.502 4.502 0 0 1 5.874 2.636.818.818 0 0 1-.36.98A7.465 7.465 0 0 1 14.5 16Z"
           />
         </svg>
         Friends
       </RouterLink>
     </li>
     <li>
-      <a>
+      <RouterLink :to="{ name: 'join-room' }">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-5 h-5"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM6.75 9.25a.75.75 0 0 0 0 1.5h4.59l-2.1 1.95a.75.75 0 0 0 1.02 1.1l3.5-3.25a.75.75 0 0 0 0-1.1l-3.5-3.25a.75.75 0 1 0-1.02 1.1l2.1 1.95H6.75Z"
+            clip-rule="evenodd"
           />
         </svg>
         Join a room
-      </a>
+      </RouterLink>
     </li>
     <li>
-      <a>
+      <RouterLink :to="{ name: 'create-room' }">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-5 h-5"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-11.25a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5Z"
+            clip-rule="evenodd"
           />
         </svg>
         Create a room
-      </a>
+      </RouterLink>
     </li>
     <BaseAvatar class="mt-auto" :user-name="'Petrut'" />
   </ul>
