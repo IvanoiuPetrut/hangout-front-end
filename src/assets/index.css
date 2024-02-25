@@ -6,3 +6,7 @@
   color: oklch(var(--p));
   background-color: oklch(var(--p) / 0.1);
 }
+
+.bg-primary-transparent {
+  background-color: oklch(var(--p) / 0.1);
+}

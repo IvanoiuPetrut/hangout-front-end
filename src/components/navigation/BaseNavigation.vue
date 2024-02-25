@@ -18,7 +18,6 @@ function handleToggleMenuVisibility(): void {
 <template>
   <nav>
     <TopNavigation
-      :friend-name="'Some random name'"
       @toggle-menu-visibility="handleToggleMenuVisibility"
       class="relative border-b-2 border-neutral"
     />
