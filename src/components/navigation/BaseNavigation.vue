@@ -24,7 +24,8 @@ function handleToggleMenuVisibility(): void {
     />
   </nav>
   <LeftMenu
-    class="z-50 absolute transition-all h-[calc(100%-4rem)] border-r-2 border-neutral"
+    @toggle-menu-visibility="handleToggleMenuVisibility"
+    class="z-50 absolute transition-all h-[calc(100%-4rem-2px)] border-r-2 border-neutral"
     :class="[isMenuVisible ? 'left-0' : '-left-full']"
   />
 </template>

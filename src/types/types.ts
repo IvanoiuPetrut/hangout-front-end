@@ -1,6 +1,7 @@
 export type Friend = {
-  id: string | number;
+  id: string;
   name: string;
+  photo: string;
 };
 
 export type AccessTokens = {

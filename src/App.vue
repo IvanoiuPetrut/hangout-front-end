@@ -54,7 +54,7 @@ onMounted(async () => {
   <header>
     <BaseNavigation @toggle-menu-visibility="handleToggleMenuVisibility" />
   </header>
-  <div :class="[shouldContentHavePadding ? 'pl-56' : 'pl-0']">
+  <div :class="[shouldContentHavePadding ? 'sm:pl-56' : 'pl-0']">
     <RouterView />
   </div>
 </template>

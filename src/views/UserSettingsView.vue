@@ -3,8 +3,10 @@ import { useUserStore } from "@/stores/user";
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 items-center mt-32">
-    <div class="flex gap-24 w-fit p-4 border-2 border-neutral rounded-lg mx-auto">
+  <div class="flex flex-col gap-8 items-center mt-8 px-4 sm:mt-32">
+    <div
+      class="flex flex-col sm:flex-row gap-8 sm:gap-24 w-fit p-4 border-2 border-neutral rounded-lg mx-auto"
+    >
       <div class="flex flex-col gap-4">
         <div>
           <label class="form-control w-full max-w-xs">
@@ -31,7 +33,7 @@ import { useUserStore } from "@/stores/user";
           </label>
         </div>
       </div>
-      <div class="flex flex-col items-center gap-6">
+      <div class="flex flex-col items-center gap-6 order-first sm:order-last">
         <h3 class="text-md font-bold uppercase">Profile Photo</h3>
         <img class="mask mask-squircle w-32" :src="useUserStore().photo || ''" />
         <input type="file" class="file-input file-input-bordered file-input-xs w-full max-w-xs" />

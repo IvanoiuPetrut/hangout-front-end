@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
+
+const emit = defineEmits<{
+  (e: "toggleMenuVisibility"): void;
+}>();
+
+function handleToggleMenuVisibility(): void {
+  const smallScreenWidth = 640;
+  const smallScreen = window.innerWidth < smallScreenWidth;
+  if (smallScreen) {
+    emit("toggleMenuVisibility");
+  }
+}
 </script>
 
 <template>
   <ul class="menu bg-base-200 w-56 gap-4">
     <li>
-      <RouterLink :to="{ name: 'home' }">
+      <RouterLink :to="{ name: 'home' }" @click="handleToggleMenuVisibility">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
@@ -22,7 +34,7 @@ import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
       </RouterLink>
     </li>
     <li>
-      <RouterLink :to="{ name: 'friends' }">
+      <RouterLink :to="{ name: 'friends' }" @click="handleToggleMenuVisibility">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
@@ -37,7 +49,7 @@ import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
       </RouterLink>
     </li>
     <li>
-      <RouterLink :to="{ name: 'join-room' }">
+      <RouterLink :to="{ name: 'join-room' }" @click="handleToggleMenuVisibility">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
@@ -54,7 +66,7 @@ import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
       </RouterLink>
     </li>
     <li>
-      <RouterLink :to="{ name: 'create-room' }">
+      <RouterLink :to="{ name: 'create-room' }" @click="handleToggleMenuVisibility">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
@@ -70,6 +82,6 @@ import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
         Create a room
       </RouterLink>
     </li>
-    <BaseAvatar class="mt-auto" :user-name="'Petrut'" />
+    <BaseAvatar class="mt-auto" />
   </ul>
 </template>
