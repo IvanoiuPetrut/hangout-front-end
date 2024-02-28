@@ -4,8 +4,10 @@ import type { Friend } from "@/types/types.ts";
 
 import FriendList from "@/components/friends/FriendList.vue";
 import FriendsChat from "@/components/friends/FriendsChat.vue";
+import AddFriend from "@/components/friends/AddFriend.vue";
 
 const selectedFriend = ref<Friend | null>(null);
+const isFriendsMenuVisible = ref(false);
 
 const friendsDummy = [
   {
@@ -108,17 +110,43 @@ const friendsDummy = [
 function handleSelectFriend(friend: Friend): void {
   selectedFriend.value = friend;
 }
+
+function toggleFriendsMenuVisibility(): void {
+  isFriendsMenuVisible.value = !isFriendsMenuVisible.value;
+}
 </script>
 
 <template>
   <div class="flex">
-    <div class="h-[calc(100vh-4rem-2px)] flex flex-col gap-4 border-r-2 border-neutral bg-base-300">
+    <div
+      class="h-[calc(100vh-4rem-2px)] flex flex-col gap-4 z-10 border-r-2 border-neutral bg-base-300"
+      :class="{ hidden: isFriendsMenuVisible }"
+    >
       <FriendList
         :friends="friendsDummy"
         @select-friend="handleSelectFriend"
         class="p-2 overflow-y-auto"
       />
-      <button class="btn btn-sm btn-neutral mt-auto mb-2 mx-4">
+      <AddFriend />
+      <button class="btn btn-sm btn-primary mt-auto mx-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+          />
+        </svg>
+
+        Add friend
+      </button>
+      <button @click="toggleFriendsMenuVisibility" class="btn btn-sm btn-neutral mt-auto mb-2 mx-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -135,7 +163,28 @@ function handleSelectFriend(friend: Friend): void {
       </button>
     </div>
     <div class="w-full grid grid-rows-[auto,1fr]">
-      <div class="w-full border-b-2 border-neutral py-1">
+      <div class="w-full border-b-2 border-neutral py-2">
+        <button
+          v-if="isFriendsMenuVisible"
+          @click="toggleFriendsMenuVisibility"
+          class="btn btn-neutral btn-sm ml-2 absolute"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+            />
+          </svg>
+          Open
+        </button>
         <h3 v-if="selectedFriend" class="mx-auto text-center text-xl px-4 text-accent font-bold">
           {{ selectedFriend.name }}
         </h3>
@@ -155,7 +204,7 @@ function handleSelectFriend(friend: Friend): void {
           <span> Select a friend </span>
         </h3>
       </div>
-      <FriendsChat v-if="selectedFriend" />
+      <FriendsChat v-if="selectedFriend" class="absolute left-0 bottom-0 sm:static" />
     </div>
   </div>
 </template>
