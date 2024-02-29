@@ -13,8 +13,7 @@ function useAsyncRequest<T>(request: () => Promise<T>) {
     try {
       data.value = await request();
     } catch (e: any) {
-      console.error(e);
-      error.value = e;
+      error.value = e.response.data.message;
     } finally {
       loading.value = false;
     }
@@ -37,7 +36,6 @@ async function updateUserDetails(userName: string, password: string): Promise<Us
   const body = {
     username: userName
   };
-  console.log("body", body);
   const userDetails = await backendInstanceForInteractor.patch("/user/details", body);
   return userDetails.data;
 }

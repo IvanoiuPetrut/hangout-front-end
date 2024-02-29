@@ -3,6 +3,8 @@ import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import { updateUserDetails, useAsyncRequest } from "@/services/user/userInteractor";
 
+import BaseAlert from "@/components/alert/BaseAlert.vue";
+
 const userName = ref("");
 const password = ref("");
 const photo = ref("");
@@ -11,15 +13,25 @@ const { data, error, loading, execute } = useAsyncRequest(() =>
   updateUserDetails(userName.value, password.value)
 );
 
-function handleSaveSettings(): void {
-  execute();
+async function handleSaveSettings() {
+  await execute();
+  if (!error.value) {
+    useUserStore().setUserName(userName.value);
+  }
+  setTimeout(() => {
+    data.value = null;
+    error.value = null;
+  }, 3500);
 }
 </script>
 
 <template>
-  <p>data:{{ data }}</p>
-  <p>error:{{ error }}</p>
-  <p>loading:{{ loading }}</p>
+  <BaseAlert v-if="data" class="alert-success">
+    <span>Settings saved successfully.</span>
+  </BaseAlert>
+  <BaseAlert v-if="error" class="alert-error">
+    <span>{{ error }}</span>
+  </BaseAlert>
   <div class="flex flex-col gap-8 items-center mt-8 px-4 sm:mt-32">
     <div
       class="flex flex-col sm:flex-row gap-8 sm:gap-24 w-fit p-4 border-2 border-neutral rounded-lg mx-auto"
@@ -58,6 +70,9 @@ function handleSaveSettings(): void {
         <input type="file" class="file-input file-input-bordered file-input-xs w-full max-w-xs" />
       </div>
     </div>
-    <button @click="handleSaveSettings" class="btn btn-primary btn-wide">Save settings</button>
+    <button @click="handleSaveSettings" class="btn btn-primary btn-wide" :disabled="loading">
+      <span v-if="loading" class="loading loading-spinner"></span>
+      Save settings
+    </button>
   </div>
 </template>

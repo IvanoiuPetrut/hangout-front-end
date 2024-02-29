@@ -10,7 +10,7 @@ import { useUserStore } from "@/stores/user";
       </div>
     </div>
     <div class="flex flex-col justify-between w-full">
-      <p class="text-center font-bold truncate w-36">{{ useUserStore().userName }}</p>
+      <p class="font-bold truncate w-36">{{ useUserStore().userName }}</p>
       <RouterLink :to="{ name: 'user-settings' }" class="btn btn-neutral btn-xs w-fit">
         <svg
           xmlns="http://www.w3.org/2000/svg"
