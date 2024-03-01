@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
-import { updateUserDetails, useAsyncRequest } from "@/services/user/userInteractor";
+import { updateUserDetails } from "@/services/user/userInteractor";
+import { useAsyncRequest } from "@/helpers/asyncRequest";
 
 import BaseAlert from "@/components/alert/BaseAlert.vue";
 

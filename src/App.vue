@@ -29,8 +29,8 @@ onMounted(async () => {
   if (code) {
     try {
       const tokens: AccessTokens = await getUserTokens(code);
-      setCookie("access_token", tokens.accessToken, 1 / 24);
-      setCookie("expires_in", tokens.idToken, 1 / 24);
+      setCookie("access_token", tokens.accessToken, 1);
+      setCookie("expires_in", tokens.idToken, 1);
       setCookie("refresh_token", tokens.refreshToken, 1);
 
       router.push({ path: router.currentRoute.value.path });

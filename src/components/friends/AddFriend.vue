@@ -1,7 +1,16 @@
 <script lang="ts" setup>
 import { ref } from "vue";
+import SendFriendRequestList from "@/components/friends/SendFriendRequestList.vue";
+import { getUsers } from "@/services/user/userInteractor";
+import { useAsyncRequest } from "@/helpers/asyncRequest";
 
 const userName = ref("");
+const { data, loading, execute } = useAsyncRequest(() => getUsers(userName.value));
+
+async function handleSearchUsers() {
+  await execute();
+  console.log(data.value);
+}
 </script>
 
 <template>
@@ -36,8 +45,9 @@ const userName = ref("");
           class="grow input-sm bg-base-100"
         />
 
-        <button class="btn btn-neutral btn-sm">
+        <button @click="handleSearchUsers" class="btn btn-neutral btn-sm" :disabled="loading">
           <svg
+            v-if="!loading"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -49,15 +59,13 @@ const userName = ref("");
               clip-rule="evenodd"
             />
           </svg>
+          <span v-if="loading" class="loading loading-spinner loading-md"></span>
           Search
         </button>
       </label>
-      <ul>
-        <li class="flex items-center gap-2 mt-4">
-          <p class="font-bold">Friend name</p>
-          <button class="btn btn-sm btn-primary">Add</button>
-        </li>
-      </ul>
+      <SendFriendRequestList v-if="data" :users="data" />
+      <p v-if="!data" class="mt-2">Enter a name and hit search.</p>
+      <p v-if="data && data.length === 0" class="mt-2">No results found.</p>
       <div class="modal-action">
         <form method="dialog">
           <button class="btn">Close</button>
