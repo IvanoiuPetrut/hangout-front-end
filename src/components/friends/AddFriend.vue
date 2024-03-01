@@ -8,6 +8,9 @@ const userName = ref("");
 const { data, loading, execute } = useAsyncRequest(() => getUsers(userName.value));
 
 async function handleSearchUsers() {
+  if (!userName.value) {
+    return;
+  }
   await execute();
   console.log(data.value);
 }

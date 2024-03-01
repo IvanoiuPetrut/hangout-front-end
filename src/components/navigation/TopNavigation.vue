@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import ThemeController from "@components/theme/ThemeController.vue";
 
 const isMenuVisible = ref(false);
 
@@ -45,8 +46,27 @@ function handleToggleMenuVisibility() {
         </svg>
       </button>
     </div>
-    <!-- <p class="ml-auto font-bold text-xl text-accent">Hangout</p> -->
-    <div class="ml-auto font-bold bg-primary-transparent text-primary text-md py-2 px-3 rounded-md">
+    <div class="ml-auto mr-3">
+      <div class="indicator">
+        <span class="indicator-item badge badge-secondary">99+</span>
+        <button class="btn btn-sm btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <ThemeController class="mr-3" />
+    <div class="font-bold bg-primary-transparent text-primary text-md py-2 px-3 rounded-md">
       <h2 class="flex gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +81,7 @@ function handleToggleMenuVisibility() {
             d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 0 0 1.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0 0 15.75 7.5Z"
           />
         </svg>
-        <span> Hangout </span>
+        <span class="hidden sm:block">Hangout</span>
       </h2>
     </div>
   </div>
