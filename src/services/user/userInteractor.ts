@@ -19,4 +19,12 @@ async function getUsers(userName: string): Promise<Array<User>> {
   return userDetails.data;
 }
 
-export { getUserDetails, updateUserDetails, getUsers };
+async function getMultipleUsersDetails(userIds: Array<string>): Promise<Array<User>> {
+  const userDetailPromises = userIds.map((userId) =>
+    backendInstanceForInteractor.get(`/user/details/${userId}`)
+  );
+  const userDetails = await Promise.all(userDetailPromises);
+  return userDetails.map((userDetail) => userDetail.data);
+}
+
+export { getUserDetails, updateUserDetails, getUsers, getMultipleUsersDetails };

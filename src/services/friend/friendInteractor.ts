@@ -13,4 +13,37 @@ async function getFriendRequests(): Promise<Array<FriendRequest>> {
   return friendRequests.data;
 }
 
-export { sendFriendRequest, getFriendRequests };
+async function getPendingFriendRequests(): Promise<Array<FriendRequest>> {
+  const friendRequests = await backendInstanceForInteractor.get("/friend/requests/pending");
+  return friendRequests.data;
+}
+
+async function acceptFriendRequest(senderId: string): Promise<void> {
+  const body = {
+    senderId: senderId
+  };
+  const acceptFriendRequest = await backendInstanceForInteractor.post(
+    "/friend/requests/accept",
+    body
+  );
+  return acceptFriendRequest.data;
+}
+
+async function declineFriendRequest(senderId: string): Promise<void> {
+  const body = {
+    senderId: senderId
+  };
+  const declineFriendRequest = await backendInstanceForInteractor.post(
+    "/friend/requests/decline",
+    body
+  );
+  return declineFriendRequest.data;
+}
+
+export {
+  sendFriendRequest,
+  getFriendRequests,
+  getPendingFriendRequests,
+  acceptFriendRequest,
+  declineFriendRequest
+};

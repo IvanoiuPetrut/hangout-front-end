@@ -46,7 +46,7 @@ function handleToggleMenuVisibility() {
         </svg>
       </button>
     </div>
-    <div class="ml-auto mr-3">
+    <RouterLink :to="{ name: 'notifications' }" class="ml-auto mr-3">
       <div class="indicator">
         <span class="indicator-item badge badge-secondary">99+</span>
         <button class="btn btn-sm btn-ghost">
@@ -64,7 +64,7 @@ function handleToggleMenuVisibility() {
           </svg>
         </button>
       </div>
-    </div>
+    </RouterLink>
     <ThemeController class="mr-3" />
     <div class="font-bold bg-primary-transparent text-primary text-md py-2 px-3 rounded-md">
       <h2 class="flex gap-2">

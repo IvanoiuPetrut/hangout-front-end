@@ -51,6 +51,12 @@ const router = createRouter({
       name: "create-room",
       component: CreateRoomViewVue,
       meta: { requiresAuth: true }
+    },
+    {
+      path: "/notifications",
+      name: "notifications",
+      component: () => import("@/views/NotificationsView.vue"),
+      meta: { requiresAuth: true }
     }
   ]
 });
