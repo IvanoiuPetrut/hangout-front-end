@@ -70,4 +70,7 @@ onBeforeMount(async () => {
       <button class="btn btn-sm btn-primary" disabled>Pending</button>
     </li>
   </ul>
+  <p v-if="availableRequests.length === 0 && pendingRequests.length === 0" class="mt-2">
+    No results found.
+  </p>
 </template>

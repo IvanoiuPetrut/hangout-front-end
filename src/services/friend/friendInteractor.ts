@@ -1,5 +1,5 @@
 import { backendInstanceForInteractor } from "@/services/backendClient";
-import type { FriendRequest } from "@/types/types.ts";
+import type { FriendRequest, Friend } from "@/types/types.ts";
 
 async function sendFriendRequest(userId: string): Promise<void> {
   const body = {
@@ -40,10 +40,16 @@ async function declineFriendRequest(senderId: string): Promise<void> {
   return declineFriendRequest.data;
 }
 
+async function getFriends(): Promise<Array<Friend>> {
+  const friends = await backendInstanceForInteractor.get("/friend");
+  return friends.data;
+}
+
 export {
   sendFriendRequest,
   getFriendRequests,
   getPendingFriendRequests,
   acceptFriendRequest,
-  declineFriendRequest
+  declineFriendRequest,
+  getFriends
 };

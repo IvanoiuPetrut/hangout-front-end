@@ -19,10 +19,10 @@ const emit = defineEmits<{
         >
           <div class="avatar">
             <div class="w-8 rounded-full">
-              <img :src="friend.photo" :alt="friend.name" />
+              <img :src="friend.photo" :alt="friend.username" />
             </div>
           </div>
-          <p>{{ friend.name }}</p>
+          <p>{{ friend.username }}</p>
         </button>
       </li>
     </ul>

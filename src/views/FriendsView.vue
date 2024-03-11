@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import type { Friend } from "@/types/types.ts";
+import { getFriends } from "@/services/friend/friendInteractor";
+import { useAsyncRequest } from "@/helpers/asyncRequest";
 
 import FriendList from "@/components/friends/FriendList.vue";
 import FriendsChat from "@/components/friends/FriendsChat.vue";
@@ -9,103 +11,7 @@ import AddFriend from "@/components/friends/AddFriend.vue";
 const selectedFriend = ref<Friend | null>(null);
 const isFriendsMenuVisible = ref(false);
 
-const friendsDummy = [
-  {
-    id: "1",
-    name: "John",
-    photo: "https://randomuser.me/api/portraits/men/84.jpg"
-  },
-  {
-    id: "2",
-    name: "Jane",
-    photo: "https://randomuser.me/api/portraits/women/82.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  },
-  {
-    id: "3",
-    name: "Doe",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg"
-  }
-];
+const { data: friends, execute: executeGetFriends } = useAsyncRequest(getFriends);
 
 function handleSelectFriend(friend: Friend): void {
   selectedFriend.value = friend;
@@ -114,6 +20,10 @@ function handleSelectFriend(friend: Friend): void {
 function toggleFriendsMenuVisibility(): void {
   isFriendsMenuVisible.value = !isFriendsMenuVisible.value;
 }
+
+onMounted(() => {
+  executeGetFriends();
+});
 </script>
 
 <template>
@@ -123,12 +33,13 @@ function toggleFriendsMenuVisibility(): void {
       :class="{ hidden: isFriendsMenuVisible }"
     >
       <FriendList
-        :friends="friendsDummy"
+        v-if="friends"
+        :friends="friends"
         @select-friend="handleSelectFriend"
         class="p-2 overflow-y-auto"
       />
       <AddFriend />
-      <button @click="toggleFriendsMenuVisibility" class="btn btn-sm btn-neutral mt-auto mb-2 mx-4">
+      <button @click="toggleFriendsMenuVisibility" class="btn btn-sm btn-neutral mb-2 mx-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -168,7 +79,7 @@ function toggleFriendsMenuVisibility(): void {
           Open
         </button>
         <h3 v-if="selectedFriend" class="mx-auto text-center text-xl px-4 text-accent font-bold">
-          {{ selectedFriend.name }}
+          {{ selectedFriend.username }}
         </h3>
         <h3
           v-else

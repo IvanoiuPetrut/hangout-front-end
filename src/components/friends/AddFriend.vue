@@ -17,7 +17,7 @@ async function handleSearchUsers() {
 </script>
 
 <template>
-  <button class="btn btn-sm btn-primary mx-4" onclick="my_modal_5.showModal()">
+  <button class="btn btn-sm btn-primary mx-4 mt-auto" onclick="my_modal_5.showModal()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
