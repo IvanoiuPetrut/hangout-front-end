@@ -1,7 +1,27 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const message = ref("");
+
+const emit = defineEmits<{
+  (e: "sendMessage", message: string): void;
+}>();
+
+const handleSendMessage = () => {
+  emit("sendMessage", message.value);
+  message.value = "";
+};
+</script>
+
 <template>
   <label class="input input-bordered flex items-center gap-2">
-    <input type="text" class="grow bg-base-100" />
-    <button class="btn btn-sm bg-base-100 border-0 btn-square">
+    <input
+      v-model="message"
+      v-on:keyup.enter="handleSendMessage"
+      type="text"
+      class="grow bg-base-100"
+    />
+    <button @click="handleSendMessage" class="btn btn-sm bg-base-100 border-0 btn-square">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

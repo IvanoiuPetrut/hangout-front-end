@@ -101,7 +101,11 @@ onMounted(() => {
           <span> Select a friend </span>
         </h3>
       </div>
-      <FriendsChat v-if="selectedFriend" class="absolute left-0 bottom-0 sm:static" />
+      <FriendsChat
+        v-if="selectedFriend"
+        :friend-id="selectedFriend.id"
+        class="absolute left-0 bottom-0 sm:static"
+      />
     </div>
   </div>
 </template>

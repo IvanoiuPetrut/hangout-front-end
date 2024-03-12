@@ -1,5 +1,12 @@
+<script setup lang="ts">
+const props = defineProps<{
+  fromWho: "me" | "friend";
+  message: string;
+}>();
+</script>
+
 <template>
-  <div class="chat chat-start">
+  <div class="chat" :class="[props.fromWho === 'me' ? 'chat-end' : 'chat-start']">
     <div class="chat-image avatar">
       <div class="w-10 rounded-full">
         <img
@@ -8,6 +15,6 @@
         />
       </div>
     </div>
-    <div class="chat-bubble">It was said that you would, destroy the Sith, not join them.</div>
+    <div class="chat-bubble">{{ message }}</div>
   </div>
 </template>
