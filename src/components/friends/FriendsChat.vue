@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
+
 import MessageWritter from "@/components/messages/MessageWritter.vue";
 import MessageBubble from "@components/messages/MessageBubble.vue";
+
 import { io } from "socket.io-client";
 import { getCookie } from "@helpers/cookie";
-import { onMounted, ref } from "vue";
+import { useAsyncRequest } from "@helpers/asyncRequest";
+import { getMessagesFromFriendRoom } from "@services/messages/messagesInteractor";
 
 const props = defineProps<{
   friendId: string;
@@ -15,6 +19,16 @@ type messageType = {
 };
 
 const messages = ref<Array<messageType>>([]);
+
+function sortMessagesFromServer(messages: Array<messageType>, messagesFromServer: any) {
+  messagesFromServer.forEach((message: any) => {
+    if (message.senderId === props.friendId) {
+      messages.push({ fromWho: "friend", message: message.content });
+    } else {
+      messages.push({ fromWho: "me", message: message.content });
+    }
+  });
+}
 
 const socket = io("http://localhost:3000", {
   auth: {
@@ -45,11 +59,18 @@ function handleSendMessage(message: string) {
   });
 }
 
-onMounted(() => {
+onMounted(async () => {
   socket.emit("createFriendChat", {
     userToken: getCookie("access_token"),
     friendId: props.friendId
   });
+
+  const { data: messagesFromServer, execute: executeGetMessagesForChat } = useAsyncRequest(() =>
+    getMessagesFromFriendRoom(props.friendId)
+  );
+  await executeGetMessagesForChat();
+  console.log("Messages", messagesFromServer.value);
+  sortMessagesFromServer(messages.value, messagesFromServer.value);
 });
 </script>
 
