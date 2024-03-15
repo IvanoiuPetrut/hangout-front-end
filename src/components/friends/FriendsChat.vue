@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useUserStore } from "@/stores/user";
 
 import MessageWritter from "@/components/messages/MessageWritter.vue";
 import MessageBubble from "@components/messages/MessageBubble.vue";
@@ -8,9 +9,10 @@ import { io } from "socket.io-client";
 import { getCookie } from "@helpers/cookie";
 import { useAsyncRequest } from "@helpers/asyncRequest";
 import { getMessagesFromFriendRoom } from "@services/messages/messagesInteractor";
+import type { Friend } from "@/types/types";
 
 const props = defineProps<{
-  friendId: string;
+  friend: Friend;
 }>();
 
 type messageType = {
@@ -22,7 +24,7 @@ const messages = ref<Array<messageType>>([]);
 
 function sortMessagesFromServer(messages: Array<messageType>, messagesFromServer: any) {
   messagesFromServer.forEach((message: any) => {
-    if (message.senderId === props.friendId) {
+    if (message.senderId === props.friend.id) {
       messages.push({ fromWho: "friend", message: message.content });
     } else {
       messages.push({ fromWho: "me", message: message.content });
@@ -54,7 +56,7 @@ function handleSendMessage(message: string) {
 
   socket.emit("friendChatMessage", {
     userToken: getCookie("access_token"),
-    friendId: props.friendId,
+    friendId: props.friend.id,
     message
   });
 }
@@ -62,11 +64,11 @@ function handleSendMessage(message: string) {
 onMounted(async () => {
   socket.emit("createFriendChat", {
     userToken: getCookie("access_token"),
-    friendId: props.friendId
+    friendId: props.friend.id
   });
 
   const { data: messagesFromServer, execute: executeGetMessagesForChat } = useAsyncRequest(() =>
-    getMessagesFromFriendRoom(props.friendId)
+    getMessagesFromFriendRoom(props.friend.id)
   );
   await executeGetMessagesForChat();
   console.log("Messages", messagesFromServer.value);
@@ -79,7 +81,12 @@ onMounted(async () => {
     <div class="px-4 overflow-y-auto max-h-[calc(100vh-12rem)]">
       <ul>
         <li v-for="(message, index) in messages" :key="index">
-          <MessageBubble :message="message.message" :fromWho="message.fromWho" />
+          <MessageBubble
+            :message="message.message"
+            :fromWho="message.fromWho"
+            :me-photo-url="useUserStore().photo"
+            :friend-photo-url="friend.photo"
+          />
         </li>
       </ul>
     </div>

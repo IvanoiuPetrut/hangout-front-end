@@ -2,8 +2,8 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", () => {
-  const userName = ref<null | string>(null);
-  const photo = ref<null | string>(null);
+  const userName = ref<undefined | string>(undefined);
+  const photo = ref<undefined | string>(undefined);
 
   function setUserDetails(name: string, photoUrl: string) {
     userName.value = name;

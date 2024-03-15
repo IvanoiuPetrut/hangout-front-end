@@ -103,7 +103,7 @@ onMounted(() => {
       </div>
       <FriendsChat
         v-if="selectedFriend"
-        :friend-id="selectedFriend.id"
+        :friend="selectedFriend"
         class="absolute left-0 bottom-0 sm:static"
       />
     </div>
