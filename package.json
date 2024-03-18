@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vue-hero-icons/solid": "^1.7.2",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.5",
     "pinia": "^2.1.7",
