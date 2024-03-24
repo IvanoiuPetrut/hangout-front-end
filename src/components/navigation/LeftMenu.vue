@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
+import JoinedRooms from "@components/navigation/data_display/JoinedRooms.vue";
 
 const emit = defineEmits<{
   (e: "toggleMenuVisibility"): void;
@@ -64,6 +65,9 @@ function handleToggleMenuVisibility(): void {
         </svg>
         Join a room
       </RouterLink>
+    </li>
+    <li>
+      <JoinedRooms />
     </li>
     <BaseAvatar class="mt-auto" />
   </ul>

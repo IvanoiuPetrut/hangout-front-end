@@ -28,3 +28,9 @@ export type UserDetails = {
   username: string;
   photo: string;
 };
+
+export type chatRoom = {
+  id: string;
+  name: string;
+  ownerId: string;
+};
