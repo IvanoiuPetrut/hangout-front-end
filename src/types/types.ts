@@ -34,3 +34,9 @@ export type chatRoom = {
   name: string;
   ownerId: string;
 };
+
+export enum RoomContent {
+  Chat = "chat",
+  Members = "members",
+  Settings = "settings"
+}
