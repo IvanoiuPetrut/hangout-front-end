@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { RoomContent } from "@/types/types";
 
+const props = defineProps<{
+  activeContent: RoomContent | null;
+}>();
+
 const emit = defineEmits<{
   (e: "selectRoomContent", content: RoomContent): void;
 }>();
@@ -13,6 +17,7 @@ const emit = defineEmits<{
     <button
       @click="emit('selectRoomContent', RoomContent.Members)"
       class="btn btn-circle btn-outline"
+      :class="{ 'btn-primary': activeContent === RoomContent.Members }"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -25,7 +30,11 @@ const emit = defineEmits<{
         />
       </svg>
     </button>
-    <button @click="emit('selectRoomContent', RoomContent.Chat)" class="btn btn-circle btn-outline">
+    <button
+      @click="emit('selectRoomContent', RoomContent.Chat)"
+      class="btn btn-circle btn-outline"
+      :class="{ 'btn-primary': activeContent === RoomContent.Chat }"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -42,6 +51,7 @@ const emit = defineEmits<{
     <button
       @click="emit('selectRoomContent', RoomContent.Settings)"
       class="btn btn-circle btn-outline"
+      :class="{ 'btn-primary': activeContent === RoomContent.Settings }"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
