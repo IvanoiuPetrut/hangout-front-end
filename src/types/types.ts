@@ -38,5 +38,6 @@ export type chatRoom = {
 export enum RoomContent {
   Chat = "chat",
   Members = "members",
-  Settings = "settings"
+  Settings = "settings",
+  Voice = "voice"
 }
