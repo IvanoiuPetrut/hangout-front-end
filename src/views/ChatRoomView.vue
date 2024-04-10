@@ -5,6 +5,7 @@ import { RoomContent } from "@/types/types";
 import QuickActionMenu from "@/components/room/QuickActionMenu.vue";
 import BaseHeaderChatRoom from "@/components/room/BaseHeader.vue";
 import RoomMembers from "@/components/room/RoomMembers.vue";
+import RoomChat from "@/components/room/RoomChat.vue";
 
 const props = defineProps<{
   roomId: string;
@@ -27,6 +28,7 @@ function handleSelectRoomContent(content: RoomContent): void {
     />
     <div class="flex-1 p-4">
       <RoomMembers v-show="selectedRoomContent === RoomContent.Members" />
+      <RoomChat v-show="selectedRoomContent === RoomContent.Chat" />
     </div>
   </div>
 </template>

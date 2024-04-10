@@ -38,16 +38,7 @@ const socket = io("http://localhost:3000", {
   }
 });
 
-socket.on("connect", () => {
-  console.log("Connected to server", socket.id);
-});
-
-socket.on("disconnect", () => {
-  console.log("Disconnected from server", socket.id);
-});
-
 socket.on("friendChatMessage", (message) => {
-  console.log("Message received", message);
   messages.value.push({ fromWho: "friend", message: message });
 });
 
