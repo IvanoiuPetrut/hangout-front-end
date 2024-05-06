@@ -1,5 +1,10 @@
 import { backendInstanceForInteractor } from "@/services/backendClient";
-import type { chatRoom, chatRoomInvite } from "@/types/types";
+import type { chatRoom, chatRoomDetails, chatRoomInvite } from "@/types/types";
+
+async function getChatRoomDetails(roomId: string): Promise<chatRoomDetails> {
+  const chatRoom = await backendInstanceForInteractor.get(`/chat-room/details/${roomId}`);
+  return chatRoom.data;
+}
 
 async function createChatRoom(roomName: string): Promise<chatRoom> {
   const body = {
@@ -43,6 +48,7 @@ async function declineInvite(inviteId: string): Promise<void> {
 }
 
 export {
+  getChatRoomDetails,
   createChatRoom,
   getJoinedChatRooms,
   getRoomsWhereUserIsNotMember,

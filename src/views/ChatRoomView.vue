@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { RoomContent } from "@/types/types";
+import { getChatRoomDetails } from "@/services/chatRoom/chatRoomInteractor";
+import { useAsyncRequest } from "@/helpers/asyncRequest";
+import { onBeforeRouteUpdate } from "vue-router";
 
 import QuickActionMenu from "@/components/room/QuickActionMenu.vue";
 import BaseHeaderChatRoom from "@/components/room/BaseHeader.vue";
@@ -14,22 +17,40 @@ const props = defineProps<{
 }>();
 
 const selectedRoomContent = ref<RoomContent | null>(RoomContent.Chat);
+const { data: chatRoomDetails, execute: executeGetChatRoomDetails } = useAsyncRequest(() =>
+  getChatRoomDetails(props.roomId)
+);
 
 function handleSelectRoomContent(content: RoomContent): void {
   selectedRoomContent.value = content;
 }
+
+onBeforeRouteUpdate(async (to, from, next) => {
+  if (to.params.roomId !== from.params.roomId) {
+    await executeGetChatRoomDetails();
+  }
+  next();
+});
+
+onMounted(async () => {
+  console.log("ChatRoomView mounted");
+  await executeGetChatRoomDetails();
+});
 </script>
 
 <template>
-  <!-- ! Header -->
-  <BaseHeaderChatRoom :roomName="'CameraFotbalistilor'" />
+  <BaseHeaderChatRoom v-if="chatRoomDetails" :roomName="chatRoomDetails.name" />
   <div class="flex w-full">
     <QuickActionMenu
       @select-room-content="handleSelectRoomContent"
       :active-content="selectedRoomContent"
     />
-    <div class="flex-1 p-4">
-      <RoomMembers v-show="selectedRoomContent === RoomContent.Members" />
+    <div v-if="chatRoomDetails" class="flex-1 p-4">
+      <RoomMembers
+        v-show="selectedRoomContent === RoomContent.Members"
+        :members="chatRoomDetails.members"
+        :owner-id="chatRoomDetails.owner.id"
+      />
       <RoomChat v-show="selectedRoomContent === RoomContent.Chat" />
       <RoomSettings v-show="selectedRoomContent === RoomContent.Settings" />
       <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" />

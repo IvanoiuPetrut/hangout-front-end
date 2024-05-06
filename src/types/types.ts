@@ -35,6 +35,23 @@ export type chatRoom = {
   ownerId: string;
 };
 
+export type message = {
+  id: string;
+  chatRoomId: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  createdAt: string;
+};
+
+export type chatRoomDetails = {
+  id: string;
+  name: string;
+  owner: User;
+  members: Array<User>;
+  messages: Array<message>;
+};
+
 export type chatRoomInvite = {
   id: string;
   roomName: string;

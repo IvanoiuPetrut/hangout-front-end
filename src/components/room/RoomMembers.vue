@@ -1,75 +1,42 @@
 <script setup lang="ts">
+import type { User } from "@/types/types";
 import QuickActionMemberSettings from "@components/room/QuickActionMemberSettings.vue";
+
+function isUserOwner(ownerId: string, userId: string): boolean {
+  return ownerId === userId;
+}
+
+const props = defineProps<{
+  members: Array<User>;
+  ownerId: string;
+}>();
 </script>
 
 <template>
+  <!-- <span class="badge badge-primary badge-sm">Owner</span>
+  <span class="badge badge-neutral badge-sm">Member</span>
+  <span class="badge badge-secondary badge-sm">Moderator</span> -->
   <ul class="flex flex-col gap-4">
-    <li class="flex gap-2 md:gap-12 items-center justify-between md:justify-normal">
+    <li
+      v-for="member in props.members"
+      :key="member.id"
+      class="flex gap-2 md:gap-12 items-center justify-between md:justify-normal"
+    >
       <div class="flex gap-2 items-center md:gap-4">
         <div class="mask mask-circle w-8 h-8 md:w-12 md:h-12">
-          <img
-            src="https://www.gravatar.com/avatar/3b3be63a4c2asdas01asdasda02?d=identicon"
-            alt="Avatar Tailwind CSS Component"
-          />
+          <img :src="member.photo" alt="Avatar Tailwind CSS Component" />
         </div>
-        <p class="font-bold text-sm md:text-lg">User name</p>
+        <p class="font-bold text-sm md:text-lg">{{ member.username }}</p>
       </div>
-      <span class="badge badge-primary badge-sm">Owner</span>
-      <QuickActionMemberSettings />
-    </li>
+      <span v-if="isUserOwner(props.ownerId, member.id)" class="badge badge-primary badge-sm"
+        >Owner</span
+      >
+      <span v-else class="badge badge-neutral badge-sm">Member</span>
 
-    <li class="flex gap-2 md:gap-12 items-center justify-between md:justify-normal">
-      <div class="flex gap-2 items-center md:gap-4">
-        <div class="mask mask-circle w-8 h-8 md:w-12 md:h-12">
-          <img
-            src="https://www.gravatar.com/avatar/3b3be63a4c2asdas01asdasda02?d=identicon"
-            alt="Avatar Tailwind CSS Component"
-          />
-        </div>
-        <p class="font-bold text-sm md:text-lg">User name</p>
-      </div>
-      <span class="badge badge-neutral badge-sm">Member</span>
-      <QuickActionMemberSettings />
+      <QuickActionMemberSettings
+        :owner-id="props.ownerId"
+        v-if="!isUserOwner(props.ownerId, member.id)"
+      />
     </li>
-
-    <li class="flex gap-2 md:gap-12 items-center justify-between md:justify-normal">
-      <div class="flex gap-2 items-center md:gap-4">
-        <div class="mask mask-circle w-8 h-8 md:w-12 md:h-12">
-          <img
-            src="https://www.gravatar.com/avatar/3b3be63a4c2asdas01asdasda02?d=identicon"
-            alt="Avatar Tailwind CSS Component"
-          />
-        </div>
-        <p class="font-bold text-sm md:text-lg">User name</p>
-      </div>
-      <span class="badge badge-secondary badge-sm">Moderator</span>
-      <QuickActionMemberSettings />
-    </li>
-    <!-- <li class="flex gap-2 items-center">
-      <div class="flex gap-4 items-center">
-        <div class="mask mask-circle w-12 h-12">
-          <img
-            src="https://www.gravatar.com/avatar/3b3be63a4c2asdas01asdasda02?d=identicon"
-            alt="Avatar Tailwind CSS Component"
-          />
-        </div>
-        <p class="font-bold">User name</p>
-      </div>
-      <span class="badge badge-primary badge-sm">Owner</span>
-      <QuickActionMemberSettings />
-    </li>
-    <li class="flex gap-12 items-center">
-      <div class="flex gap-4 items-center">
-        <div class="mask mask-circle w-12 h-12">
-          <img
-            src="https://www.gravatar.com/avatar/3b3be63a4c2asdas01asdasda02?d=identicon"
-            alt="Avatar Tailwind CSS Component"
-          />
-        </div>
-        <p class="font-bold">User name</p>
-      </div>
-      <span class="badge badge-secondary badge-sm">Moderator</span>
-      <QuickActionMemberSettings />
-    </li> -->
   </ul>
 </template>
