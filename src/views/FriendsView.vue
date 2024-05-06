@@ -7,9 +7,11 @@ import { useAsyncRequest } from "@/helpers/asyncRequest";
 import FriendList from "@/components/friends/FriendList.vue";
 import FriendsChat from "@/components/friends/FriendsChat.vue";
 import AddFriend from "@/components/friends/AddFriend.vue";
+import FriendProfile from "@/components/friends/FriendProfile.vue";
 
 const selectedFriend = ref<Friend | null>(null);
 const isFriendsMenuVisible = ref(false);
+const isFriendProfileVisible = ref(false);
 
 const { data: friends, execute: executeGetFriends } = useAsyncRequest(getFriends);
 
@@ -19,6 +21,10 @@ function handleSelectFriend(friend: Friend): void {
 
 function toggleFriendsMenuVisibility(): void {
   isFriendsMenuVisible.value = !isFriendsMenuVisible.value;
+}
+
+function handleFriendProfileVisibility(): void {
+  isFriendProfileVisible.value = !isFriendProfileVisible.value;
 }
 
 onMounted(() => {
@@ -78,8 +84,20 @@ onMounted(() => {
           </svg>
           Open
         </button>
-        <h3 v-if="selectedFriend" class="mx-auto text-center text-xl px-4 text-accent font-bold">
-          {{ selectedFriend.username }}
+        <h3 v-if="selectedFriend" class="gap-4 px-4">
+          <button
+            @click="handleFriendProfileVisibility"
+            class="flex items-center gap-4 mx-auto text-xl text-primary font-bold hover:text-secondary focus:outline-none transition-colors"
+          >
+            <div class="avatar">
+              <div class="w-6 rounded-full">
+                <img :src="selectedFriend.photo" />
+              </div>
+            </div>
+            <span>
+              {{ selectedFriend.username }}
+            </span>
+          </button>
         </h3>
         <h3
           v-else
@@ -101,6 +119,12 @@ onMounted(() => {
           <span> Select a friend </span>
         </h3>
       </div>
+      <FriendProfile
+        v-if="isFriendProfileVisible && selectedFriend"
+        :friend="selectedFriend"
+        class="absolute right-4 top-32 z-50"
+        @toggleFriendProfileVisibility="handleFriendProfileVisibility"
+      />
       <FriendsChat
         v-if="selectedFriend"
         :friend="selectedFriend"

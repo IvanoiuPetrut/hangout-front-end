@@ -35,6 +35,15 @@ export type chatRoom = {
   ownerId: string;
 };
 
+export type chatRoomInvite = {
+  id: string;
+  roomName: string;
+  chatRoomId: string;
+  toUserId: string;
+  status: string;
+  createdAt: string;
+};
+
 export enum RoomContent {
   Chat = "chat",
   Members = "members",
