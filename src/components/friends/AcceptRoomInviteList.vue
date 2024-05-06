@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { getInvites, acceptInvite, declineInvite } from "@/services/chatRoom/chatRoomInteractor";
+import { onMounted } from "vue";
+import {
+  getInvites,
+  acceptInvite,
+  declineInvite,
+  getJoinedChatRooms
+} from "@/services/chatRoom/chatRoomInteractor";
+import { useJoinedRoomsStore } from "@/stores/joinedRooms";
 import { useAsyncRequest } from "@/helpers/asyncRequest";
 
 const { data: chatRoomInvites, execute: executeGetInvites } = useAsyncRequest(getInvites);
+const { data: joinedRooms, execute: executeGetJoinedChatRooms } =
+  useAsyncRequest(getJoinedChatRooms);
 
 async function handleAcceptChatRoomInvite(inviteId: string): Promise<void> {
   const { execute: executeAcceptInvite } = useAsyncRequest(() => acceptInvite(inviteId));
   await executeAcceptInvite();
   await executeGetInvites();
+  await executeGetJoinedChatRooms();
+  if (joinedRooms.value) {
+    useJoinedRoomsStore().setJoinedRooms(joinedRooms.value);
+  }
 }
 
 async function handleDeclineChatRoomInvite(inviteId: string): Promise<void> {

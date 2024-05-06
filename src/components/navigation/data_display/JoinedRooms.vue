@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useAsyncRequest } from "@/helpers/asyncRequest";
 import { getJoinedChatRooms } from "@/services/chatRoom/chatRoomInteractor";
+import { useJoinedRoomsStore } from "@/stores/joinedRooms";
 
 const isRoomListVisible = ref(false);
 const { data: joinedRooms, execute: executeGetJoinedChatRooms } =
@@ -11,8 +12,11 @@ function toggleRoomListVisibility(): void {
   isRoomListVisible.value = !isRoomListVisible.value;
 }
 
-onMounted(() => {
-  executeGetJoinedChatRooms();
+onMounted(async () => {
+  await executeGetJoinedChatRooms();
+  if (joinedRooms.value) {
+    useJoinedRoomsStore().setJoinedRooms(joinedRooms.value);
+  }
 });
 </script>
 
@@ -56,11 +60,11 @@ onMounted(() => {
   </button>
 
   <ul
-    v-if="!!joinedRooms"
+    v-if="useJoinedRoomsStore().joinedRooms.length > 0"
     :class="{ 'scale-y-0': !isRoomListVisible }"
     class="menu bg-base-100 gap-4 transition-all rounded-md"
   >
-    <li v-for="room in joinedRooms" :key="room.id">
+    <li v-for="room in useJoinedRoomsStore().joinedRooms" :key="room.id">
       <RouterLink :to="{ name: 'chat-room', params: { roomId: room.id } }">
         {{ room.name }}
       </RouterLink>

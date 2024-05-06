@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useAsyncRequest } from "@/helpers/asyncRequest";
-import { createChatRoom } from "@/services/chatRoom/chatRoomInteractor";
+import { createChatRoom, getJoinedChatRooms } from "@/services/chatRoom/chatRoomInteractor";
+import { useJoinedRoomsStore } from "@/stores/joinedRooms";
 
 const roomName = ref("");
+const { data: joinedRooms, execute: executeGetJoinedChatRooms } =
+  useAsyncRequest(getJoinedChatRooms);
+
 const isRoomNameLongEnough = computed(() => roomName.value.length > 3);
 const isRoomNameMadeOfAlphaNumericCharacters = computed(() =>
   /^[a-zA-Z0-9]*$/.test(roomName.value)
@@ -13,7 +17,10 @@ async function handleCreateChatRoom() {
   const { data: chatRooms, execute } = useAsyncRequest(() => createChatRoom(roomName.value));
   if (isRoomNameLongEnough.value && isRoomNameMadeOfAlphaNumericCharacters.value) {
     await execute();
-    console.log(chatRooms);
+    await executeGetJoinedChatRooms();
+    if (joinedRooms.value) {
+      useJoinedRoomsStore().setJoinedRooms(joinedRooms.value);
+    }
   }
 }
 </script>
