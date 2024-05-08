@@ -40,6 +40,7 @@ export type message = {
   chatRoomId: string;
   senderId: string;
   receiverId: string;
+  senderPhoto: string;
   content: string;
   createdAt: string;
 };

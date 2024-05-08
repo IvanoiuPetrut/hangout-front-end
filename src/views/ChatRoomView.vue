@@ -51,7 +51,11 @@ onMounted(async () => {
         :members="chatRoomDetails.members"
         :owner-id="chatRoomDetails.owner.id"
       />
-      <RoomChat v-show="selectedRoomContent === RoomContent.Chat" />
+      <RoomChat
+        v-show="selectedRoomContent === RoomContent.Chat"
+        :messages="chatRoomDetails.messages"
+        :room-id="props.roomId"
+      />
       <RoomSettings v-show="selectedRoomContent === RoomContent.Settings" />
       <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" />
     </div>

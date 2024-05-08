@@ -9,45 +9,37 @@ import { io } from "socket.io-client";
 import { getCookie } from "@helpers/cookie";
 import { useAsyncRequest } from "@helpers/asyncRequest";
 import { getMessagesFromFriendRoom } from "@services/messages/messagesInteractor";
-import type { Friend } from "@/types/types";
+import { getUserDetails } from "@/services/user/userInteractor";
+import type { Friend, message } from "@/types/types";
 
 const props = defineProps<{
   friend: Friend;
 }>();
 
-type messageType = {
-  fromWho: "me" | "friend";
-  message: string;
-};
+const messages = ref<Array<message>>([]);
+const { data: userDetails, execute: executeGetUserDetails } = useAsyncRequest(() =>
+  getUserDetails()
+);
 
-const messages = ref<Array<messageType>>([]);
-
-function sortMessagesFromServer(messages: Array<messageType>, messagesFromServer: any) {
-  messagesFromServer.forEach((message: any) => {
-    if (message.senderId === props.friend.id) {
-      messages.push({ fromWho: "friend", message: message.content });
-    } else {
-      messages.push({ fromWho: "me", message: message.content });
-    }
-  });
+function whoIsOwnerOfMessage(senderId: string, userId: string) {
+  return senderId === userId ? "me" : "friend";
 }
 
-const socket = io("http://localhost:3000", {
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
   auth: {
     token: getCookie("access_token")
   }
 });
 
 socket.on("friendChatMessage", (message) => {
-  messages.value.push({ fromWho: "friend", message: message });
+  messages.value.push(message);
 });
 
 function handleSendMessage(message: string) {
-  messages.value.push({ fromWho: "me", message });
-
   socket.emit("friendChatMessage", {
     userToken: getCookie("access_token"),
     friendId: props.friend.id,
+    senderPhoto: useUserStore().photo,
     message
   });
 }
@@ -62,21 +54,22 @@ onMounted(async () => {
     getMessagesFromFriendRoom(props.friend.id)
   );
   await executeGetMessagesForChat();
-  console.log("Messages", messagesFromServer.value);
-  sortMessagesFromServer(messages.value, messagesFromServer.value);
+  if (messagesFromServer.value) {
+    messages.value.push(...messagesFromServer.value);
+  }
+  await executeGetUserDetails();
 });
 </script>
 
 <template>
   <div class="flex flex-col w-full pt-4">
     <div class="px-4 overflow-y-auto max-h-[calc(100vh-12rem)]">
-      <ul>
+      <ul v-if="userDetails && messages">
         <li v-for="(message, index) in messages" :key="index">
           <MessageBubble
-            :message="message.message"
-            :fromWho="message.fromWho"
-            :me-photo-url="useUserStore().photo"
-            :friend-photo-url="friend.photo"
+            :message="message.content"
+            :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
+            :photo-url="message.senderPhoto"
           />
         </li>
       </ul>

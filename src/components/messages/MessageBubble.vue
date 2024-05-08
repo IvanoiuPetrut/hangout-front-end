@@ -2,8 +2,7 @@
 const props = defineProps<{
   fromWho: "me" | "friend";
   message: string;
-  friendPhotoUrl: string | undefined;
-  mePhotoUrl: string | undefined;
+  photoUrl: string | undefined;
 }>();
 </script>
 
@@ -11,11 +10,7 @@ const props = defineProps<{
   <div class="chat" :class="[props.fromWho === 'me' ? 'chat-end' : 'chat-start']">
     <div class="chat-image avatar">
       <div class="w-10 rounded-full">
-        <img
-          v-if="friendPhotoUrl && mePhotoUrl"
-          alt="Profile photo"
-          :src="props.fromWho === 'me' ? props.mePhotoUrl : props.friendPhotoUrl"
-        />
+        <img v-if="photoUrl" alt="Profile photo" :src="props.photoUrl" />
         <img
           v-else
           alt="Profile photo"
