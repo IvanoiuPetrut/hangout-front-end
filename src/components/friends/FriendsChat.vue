@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useUserStore } from "@/stores/user";
 
 import MessageWritter from "@/components/messages/MessageWritter.vue";
 import MessageBubble from "@components/messages/MessageBubble.vue";
 
-import { io } from "socket.io-client";
 import { getCookie } from "@helpers/cookie";
 import { useAsyncRequest } from "@helpers/asyncRequest";
 import { getMessagesFromFriendRoom } from "@services/messages/messagesInteractor";
 import { getUserDetails } from "@/services/user/userInteractor";
+import { useSocketStore } from "@/stores/socket";
 import type { Friend, message } from "@/types/types";
 
 const props = defineProps<{
@@ -25,18 +25,8 @@ function whoIsOwnerOfMessage(senderId: string, userId: string) {
   return senderId === userId ? "me" : "friend";
 }
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-  auth: {
-    token: getCookie("access_token")
-  }
-});
-
-socket.on("friendChatMessage", (message) => {
-  messages.value.push(message);
-});
-
 function handleSendMessage(message: string) {
-  socket.emit("friendChatMessage", {
+  useSocketStore().socket.emit("friendChatMessage", {
     userToken: getCookie("access_token"),
     friendId: props.friend.id,
     senderPhoto: useUserStore().photo,
@@ -45,9 +35,13 @@ function handleSendMessage(message: string) {
 }
 
 onMounted(async () => {
-  socket.emit("createFriendChat", {
+  useSocketStore().socket.emit("createFriendChat", {
     userToken: getCookie("access_token"),
     friendId: props.friend.id
+  });
+
+  useSocketStore().socket.on("friendChatMessage", (message) => {
+    messages.value.push(message);
   });
 
   const { data: messagesFromServer, execute: executeGetMessagesForChat } = useAsyncRequest(() =>
@@ -58,6 +52,15 @@ onMounted(async () => {
     messages.value.push(...messagesFromServer.value);
   }
   await executeGetUserDetails();
+});
+
+onUnmounted(() => {
+  useSocketStore().socket.emit("leaveFriendChat", {
+    userToken: getCookie("access_token"),
+    friendId: props.friend.id
+  });
+
+  useSocketStore().socket.off("friendChatMessage");
 });
 </script>
 

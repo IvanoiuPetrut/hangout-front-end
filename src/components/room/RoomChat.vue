@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import type { message } from "@/types/types";
-import { io } from "socket.io-client";
 import { getCookie } from "@helpers/cookie";
 import { useUserStore } from "@/stores/user";
+import { useSocketStore } from "@/stores/socket";
 import { useAsyncRequest } from "@helpers/asyncRequest";
 import { getUserDetails } from "@/services/user/userInteractor";
 
@@ -15,12 +15,6 @@ const props = defineProps<{
   roomId: string;
 }>();
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-  auth: {
-    token: getCookie("access_token")
-  }
-});
-
 const newMessages = ref<Array<message>>([]);
 
 const { data: userDetails, execute: executeGetUserDetails } = useAsyncRequest(() =>
@@ -31,12 +25,8 @@ function whoIsOwnerOfMessage(senderId: string, userId: string) {
   return senderId === userId ? "me" : "friend";
 }
 
-socket.on("chatRoomChatMessage", (message) => {
-  newMessages.value.push(message);
-});
-
 function handleSendMessage(message: string) {
-  socket.emit("chatRoomChatMessage", {
+  useSocketStore().socket.emit("chatRoomChatMessage", {
     userToken: getCookie("access_token"),
     chatRoomId: props.roomId,
     senderPhoto: useUserStore().photo,
@@ -45,18 +35,24 @@ function handleSendMessage(message: string) {
 }
 onMounted(async () => {
   newMessages.value.push(...props.messages);
-  socket.emit("joinChatRoom", {
+  useSocketStore().socket.emit("joinChatRoom", {
     userToken: getCookie("access_token"),
     chatRoomId: props.roomId
+  });
+
+  useSocketStore().socket.on("chatRoomChatMessage", (message) => {
+    newMessages.value.push(message);
   });
   await executeGetUserDetails();
 });
 
 onUnmounted(() => {
-  socket.emit("leaveChatRoom", {
+  useSocketStore().socket.emit("leaveChatRoom", {
     userToken: getCookie("access_token"),
     chatRoomId: props.roomId
   });
+
+  useSocketStore().socket.off("chatRoomChatMessage");
 });
 </script>
 
