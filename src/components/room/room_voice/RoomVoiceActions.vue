@@ -1,3 +1,32 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const isMicMuted = ref(false);
+const isCameraOff = ref(false);
+const isAudioMuted = ref(false);
+
+const emit = defineEmits<{
+  (e: "toggleMic", value: boolean): void;
+  (e: "toggleCamera", value: boolean): void;
+  (e: "toggleAudio", value: boolean): void;
+}>();
+
+function toggleMic() {
+  isMicMuted.value = !isMicMuted.value;
+  emit("toggleMic", isMicMuted.value);
+}
+
+function toggleCamera() {
+  isCameraOff.value = !isCameraOff.value;
+  emit("toggleCamera", isCameraOff.value);
+}
+
+function toggleAudio() {
+  isAudioMuted.value = !isAudioMuted.value;
+  emit("toggleAudio", isAudioMuted.value);
+}
+</script>
+
 <template>
   <div class="w-56 md:w-72 mx-auto flex justify-between">
     <button class="btn btn-sm md:btn-md btn-circle btn-outline">
@@ -14,7 +43,12 @@
         />
       </svg>
     </button>
-    <button class="btn btn-sm md:btn-md btn-circle btn-outline">
+
+    <button
+      class="btn btn-sm md:btn-md btn-circle btn-outline"
+      :class="isMicMuted ? 'btn-error' : ''"
+      @click="toggleMic"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
@@ -27,7 +61,12 @@
         />
       </svg>
     </button>
-    <button class="btn btn-sm md:btn-md btn-circle btn-outline">
+
+    <button
+      class="btn btn-sm md:btn-md btn-circle btn-outline"
+      :class="isAudioMuted ? 'btn-error' : ''"
+      @click="toggleAudio"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
@@ -42,7 +81,12 @@
         />
       </svg>
     </button>
-    <button class="btn btn-sm md:btn-md btn-circle btn-outline">
+
+    <button
+      class="btn btn-sm md:btn-md btn-circle btn-outline"
+      :class="isCameraOff ? 'btn-error' : ''"
+      @click="toggleCamera"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
