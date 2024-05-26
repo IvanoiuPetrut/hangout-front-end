@@ -25,6 +25,7 @@ onMounted(async () => {
   await router.isReady();
 
   const code = router.currentRoute.value.query.code as string;
+  console.log(code);
 
   if (code) {
     try {
