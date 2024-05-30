@@ -10,6 +10,13 @@ export type User = {
   photo: string;
 };
 
+export type ConnectedUser = {
+  id: string;
+  name: string;
+  photo: string;
+  mediaStream: MediaStream | null;
+};
+
 export type FriendRequest = {
   from: string;
   to: string;

@@ -58,7 +58,7 @@ onMounted(async () => {
         :room-id="props.roomId"
       />
       <RoomSettings v-show="selectedRoomContent === RoomContent.Settings" />
-      <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" />
+      <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" :room-id="props.roomId" />
     </div>
   </div>
 </template>

@@ -9,6 +9,7 @@ const emit = defineEmits<{
   (e: "toggleMic", value: boolean): void;
   (e: "toggleCamera", value: boolean): void;
   (e: "toggleAudio", value: boolean): void;
+  (e: "endCall"): void;
 }>();
 
 function toggleMic() {
@@ -25,11 +26,15 @@ function toggleAudio() {
   isAudioMuted.value = !isAudioMuted.value;
   emit("toggleAudio", isAudioMuted.value);
 }
+
+function endCall() {
+  emit("endCall");
+}
 </script>
 
 <template>
   <div class="w-56 md:w-72 mx-auto flex justify-between">
-    <button class="btn btn-sm md:btn-md btn-circle btn-outline">
+    <button @click="endCall" class="btn btn-sm md:btn-md btn-circle btn-outline">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
