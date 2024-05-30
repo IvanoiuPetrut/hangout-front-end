@@ -15,6 +15,7 @@ export type ConnectedUser = {
   name: string;
   photo: string;
   mediaStream: MediaStream | null;
+  peerConnection: RTCPeerConnection | null;
 };
 
 export type FriendRequest = {

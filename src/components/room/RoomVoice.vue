@@ -20,9 +20,12 @@ const PEER_CONFIGURATION = {
   ]
 };
 
-const connectedUsers = ref<Array<ConnectedUser>>([]);
 const isUserInVoiceChannel = ref(false);
 const localStream = ref<MediaStream>();
+
+const connectedUsers = ref<Array<ConnectedUser>>([]);
+const peerConnections = ref<Array<RTCPeerConnection>>([]);
+
 const remoteStream = ref<MediaStream>();
 const socketStore = useSocketStore();
 const peerConnection = ref<RTCPeerConnection>();
@@ -33,10 +36,52 @@ async function fetchUserMedia(): Promise<MediaStream> {
   return stream;
 }
 
-async function createPeerConnection(offerObj: any = null) {
+async function answerAndCreatePeerConnection(
+  offerObj: any,
+  toSocketId: string
+): Promise<{ peerConnection: RTCPeerConnection; remoteStream: MediaStream }> {
+  const peerConnection = new RTCPeerConnection(PEER_CONFIGURATION);
+  const remoteStream = new MediaStream();
+
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, localStream.value!);
+    });
+  }
+
+  peerConnection.addEventListener("icecandidate", (event) => {
+    if (event.candidate) {
+      console.log("Sending ICE candidate");
+      setTimeout(() => {
+        socketStore.socket.emit("sendIceCandidateToTheOferrer", {
+          iceCandidate: event.candidate,
+          chatRoomId: props.roomId,
+          toSocketId: toSocketId
+        });
+      }, 5000);
+    }
+  });
+
+  peerConnection.addEventListener("track", (event) => {
+    console.log("Track received from other person", event);
+    remoteStream.addTrack(event.track);
+  });
+
+  if (offerObj) {
+    console.log("Setting remote description");
+    await peerConnection.setRemoteDescription(offerObj);
+  }
+
+  return { peerConnection, remoteStream };
+}
+
+async function createPeerConnection(
+  userId: string,
+  offerObj: any = null
+): Promise<{ peerConnection: RTCPeerConnection; remoteStream: MediaStream }> {
   console.log("Creating peer connection");
   const peerConnection = new RTCPeerConnection(PEER_CONFIGURATION);
-  remoteStream.value = new MediaStream();
+  const remoteStream = new MediaStream();
 
   if (localStream.value) {
     localStream.value.getTracks().forEach((track) => {
@@ -50,61 +95,30 @@ async function createPeerConnection(offerObj: any = null) {
   });
 
   peerConnection.addEventListener("icecandidate", (event) => {
-    console.log("ICE candidate fround", event);
+    console.log("ICE candidate found", event);
     if (event.candidate) {
       console.log("Sending ICE candidate");
-      socketStore.socket.emit("send-ice-candidate", {
-        iceCandidate: event.candidate
-      });
+      setTimeout(() => {
+        socketStore.socket.emit("sendIceCandidate", {
+          iceCandidate: event.candidate,
+          chatRoomId: props.roomId,
+          forUserId: userId
+        });
+      }, 5000);
     }
   });
 
   peerConnection.addEventListener("track", (event) => {
     console.log("Track received from other person", event);
-    remoteStream.value!.addTrack(event.track);
+    remoteStream.addTrack(event.track);
   });
 
   if (offerObj) {
     console.log("Setting remote description");
-    await peerConnection.setRemoteDescription(offerObj.offer);
+    await peerConnection.setRemoteDescription(offerObj);
   }
 
-  return peerConnection;
-}
-
-async function createCall() {
-  console.log("Creating call");
-  localStream.value = await fetchUserMedia();
-  try {
-    const peerConnection = await createPeerConnection();
-    const offer = await peerConnection.createOffer({});
-    await peerConnection.setLocalDescription(offer);
-    socketStore.socket.emit("send-offer", {
-      offer: offer
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function answerCall(offerObj: any) {
-  console.log("Answering call");
-  localStream.value = await fetchUserMedia();
-  try {
-    peerConnection.value = await createPeerConnection(offerObj);
-    const answer = await peerConnection.value.createAnswer({});
-    await peerConnection.value.setLocalDescription(answer);
-    offerObj.answer = answer;
-
-    //We get the ice candidates from the server and add them to the peer connection so that the connection can be established
-    const offerIceCandidates = await socketStore.socket.emitWithAck("send-new-answer", offerObj);
-    offerIceCandidates.forEach((iceCandidate: RTCIceCandidate) => {
-      peerConnection.value!.addIceCandidate(iceCandidate);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-  // peerConnections.value.push(peerConnection);
+  return { peerConnection, remoteStream };
 }
 
 async function addAnswer(offerObj: any) {
@@ -143,6 +157,52 @@ socketStore.socket.on("received-ice-candidate-from-server", (iceCandidate) => {
   addNewIceCandidate(iceCandidate);
   console.log(iceCandidate);
 });
+
+socketStore.socket.on("receiveOffer", async (payload) => {
+  console.log("Received offer", payload);
+  const { peerConnection, remoteStream } = await answerAndCreatePeerConnection(
+    payload.offer,
+    payload.socketId
+  );
+  const answer = await peerConnection.createAnswer({});
+  await peerConnection.setLocalDescription(answer);
+  connectedUsers.value.forEach((user) => {
+    if (user.id === payload.userId) {
+      user.peerConnection = peerConnection;
+      user.mediaStream = remoteStream;
+    }
+  });
+  socketStore.socket.emit("sendAnswer", {
+    answer: answer,
+    chatRoomId: props.roomId,
+    toSocketId: payload.socketId
+  });
+});
+
+socketStore.socket.on("receiveAnswer", async (payload) => {
+  console.log("Received answer");
+  connectedUsers.value.forEach((user) => {
+    if (user.id === payload.userId) {
+      if (user.peerConnection) {
+        user.peerConnection.setRemoteDescription(payload.answer);
+      }
+    }
+  });
+});
+
+socketStore.socket.on("receiveIceCandidate", async (payload) => {
+  console.log("Received ice candidate", payload);
+  const iceCandidate = new RTCIceCandidate(payload.iceCandidate);
+  setTimeout(async () => {
+    connectedUsers.value.forEach((user) => {
+      if (user.id === payload.userId) {
+        if (user.peerConnection) {
+          user.peerConnection.addIceCandidate(iceCandidate);
+        }
+      }
+    });
+  }, 1000);
+});
 // * ------------ SOCKETS end
 
 async function joinVoiceChannel() {
@@ -154,8 +214,29 @@ async function joinVoiceChannel() {
   });
   try {
     localStream.value = await fetchUserMedia();
+    console.log("connected users", connectedUsers.value.length);
   } catch (error) {
     console.log(error);
+  } finally {
+    try {
+      if (connectedUsers.value.length > 0) {
+        // we need to create a PC for each connected user
+        for (const user of connectedUsers.value) {
+          const { peerConnection, remoteStream } = await createPeerConnection(user.id);
+          const offer = await peerConnection.createOffer({});
+          await peerConnection.setLocalDescription(offer);
+          socketStore.socket.emit("sendOffer", {
+            offer: offer,
+            chatRoomId: props.roomId,
+            forUserId: user.id
+          });
+          user.peerConnection = peerConnection;
+          user.mediaStream = remoteStream;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
@@ -218,8 +299,8 @@ function handleEndCall() {
   // remoteStream.value = null;
 }
 
-onMounted(() => {
-  // createCall();
+onMounted(async () => {
+  console.log(connectedUsers.value.length);
 });
 
 onUnmounted(() => {
@@ -242,9 +323,8 @@ onUnmounted(() => {
         :photo="user.photo"
       />
     </div>
+    {{ connectedUsers }}
 
-    <!-- <button @click="createCall" class="btn mb-4">call</button>
-    <button @click="answerCall" class="btn">answer</button> -->
     <div class="mt-auto">
       <RoomVoiceConnectedUsers />
       <RoomVoiceActions

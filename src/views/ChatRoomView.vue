@@ -39,7 +39,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  test
   <BaseHeaderChatRoom v-if="chatRoomDetails" :roomName="chatRoomDetails.name" />
   <div class="flex w-full">
     <QuickActionMenu
