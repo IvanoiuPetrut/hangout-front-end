@@ -22,13 +22,8 @@ const PEER_CONFIGURATION = {
 
 const isUserInVoiceChannel = ref(false);
 const localStream = ref<MediaStream>();
-
 const connectedUsers = ref<Array<ConnectedUser>>([]);
-const peerConnections = ref<Array<RTCPeerConnection>>([]);
-
-const remoteStream = ref<MediaStream>();
 const socketStore = useSocketStore();
-const peerConnection = ref<RTCPeerConnection>();
 
 async function fetchUserMedia(): Promise<MediaStream> {
   console.log("Fetching user media");
@@ -121,43 +116,6 @@ async function createPeerConnection(
   return { peerConnection, remoteStream };
 }
 
-async function addAnswer(offerObj: any) {
-  //this function is called when the other person answers the call
-  await peerConnection.value!.setRemoteDescription(offerObj.answer); //We set the remote description of the offer
-}
-
-async function addNewIceCandidate(iceCandidate: RTCIceCandidate) {
-  //this function is called when the other person sends a new ice candidate
-  await peerConnection.value!.addIceCandidate(iceCandidate);
-}
-
-// * ------------ SOCKETS
-
-//on connection get all available offers and call createOfferEls
-const availableOffers = ref<Array<any>>([]); // -> this array needs to be rendered as a list of buttons on the UI
-socketStore.socket.on("available-offers", (offers) => {
-  console.log(offers);
-  for (const offer of offers) {
-    availableOffers.value.push(offer);
-  }
-});
-
-socketStore.socket.on("new-offer-awaiting", (offers) => {
-  for (const offer of offers) {
-    availableOffers.value.push(offer);
-  }
-});
-
-socketStore.socket.on("answer-response", (offerObj) => {
-  console.log(offerObj);
-  addAnswer(offerObj);
-});
-
-socketStore.socket.on("received-ice-candidate-from-server", (iceCandidate) => {
-  addNewIceCandidate(iceCandidate);
-  console.log(iceCandidate);
-});
-
 socketStore.socket.on("receiveOffer", async (payload) => {
   console.log("Received offer", payload);
   const { peerConnection, remoteStream } = await answerAndCreatePeerConnection(
@@ -200,7 +158,6 @@ socketStore.socket.on("receiveIceCandidate", async (payload) => {
     }
   });
 });
-// * ------------ SOCKETS end
 
 async function joinVoiceChannel() {
   isUserInVoiceChannel.value = true;
@@ -263,7 +220,6 @@ socketStore.socket.on("userLeftVoiceRoom", (data) => {
       });
     }
   }
-  // connectedUsers.value = data;
   connectedUsers.value = connectedUsers.value.filter((user) => {
     return user.name !== useUserStore().userName;
   });
@@ -271,13 +227,6 @@ socketStore.socket.on("userLeftVoiceRoom", (data) => {
   connectedUsers.value = connectedUsers.value.filter((user) => {
     return user.id !== null;
   });
-  // connectedUsers.value = data;
-  // connectedUsers.value = connectedUsers.value.filter((user) => {
-  //   return user.name !== useUserStore().userName;
-  // });
-  // connectedUsers.value.forEach((user) => {
-  //   user.mediaStream = null;
-  // });
 });
 
 socketStore.socket.on("userJoinedVoiceRoom", (data) => {
@@ -308,7 +257,6 @@ socketStore.socket.on("userJoinedVoiceRoom", (data) => {
       });
     }
   }
-  // connectedUsers.value = data;
   connectedUsers.value = connectedUsers.value.filter((user) => {
     return user.name !== useUserStore().userName;
   });
@@ -316,9 +264,6 @@ socketStore.socket.on("userJoinedVoiceRoom", (data) => {
   connectedUsers.value = connectedUsers.value.filter((user) => {
     return user.id !== null;
   });
-  // connectedUsers.value.forEach((user) => {
-  //   user.mediaStream = null;
-  // });
 });
 
 function handleToggleAudio(value: boolean) {
@@ -349,9 +294,6 @@ function handleEndCall() {
   socketStore.socket.emit("leaveVoiceRoom", {
     chatRoomId: props.roomId
   });
-  // peerConnection.value?.close();
-  // peerConnection.value = null;
-  // remoteStream.value = null;
 }
 
 onMounted(async () => {
