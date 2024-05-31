@@ -6,7 +6,6 @@ import { RouterView } from "vue-router";
 import { useRouter } from "vue-router";
 
 import BaseNavigation from "@components/navigation/BaseNavigation.vue";
-
 import { getUserTokens } from "@services/user/auth";
 import { setCookie, getCookie } from "@helpers/cookie";
 
