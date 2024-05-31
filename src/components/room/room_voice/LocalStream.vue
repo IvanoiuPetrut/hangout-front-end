@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
 
 const props = defineProps<{
@@ -13,6 +14,7 @@ const props = defineProps<{
       :srcObject="props.localStream"
       class="w-36 md:w-64 rounded-md group-hover:opacity-75 transition-opacity border-2 border-neutral"
       autoplay
+      muted
       playsinline
     ></video>
     <div v-else class="w-36 md:w-64 h-36 md:h-64 bg-base-200 border border-neutral rounded-md">

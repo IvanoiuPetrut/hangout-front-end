@@ -180,7 +180,6 @@ socketStore.socket.on("receiveOffer", async (payload) => {
 });
 
 socketStore.socket.on("receiveAnswer", async (payload) => {
-  console.log("Received answer");
   connectedUsers.value.forEach((user) => {
     if (user.id === payload.userId) {
       if (user.peerConnection) {
@@ -193,15 +192,13 @@ socketStore.socket.on("receiveAnswer", async (payload) => {
 socketStore.socket.on("receiveIceCandidate", async (payload) => {
   console.log("Received ice candidate", payload);
   const iceCandidate = new RTCIceCandidate(payload.iceCandidate);
-  setTimeout(async () => {
-    connectedUsers.value.forEach((user) => {
-      if (user.id === payload.userId) {
-        if (user.peerConnection) {
-          user.peerConnection.addIceCandidate(iceCandidate);
-        }
+  connectedUsers.value.forEach((user) => {
+    if (user.id === payload.userId) {
+      if (user.peerConnection) {
+        user.peerConnection.addIceCandidate(iceCandidate);
       }
-    });
-  }, 1000);
+    }
+  });
 });
 // * ------------ SOCKETS end
 
@@ -214,13 +211,11 @@ async function joinVoiceChannel() {
   });
   try {
     localStream.value = await fetchUserMedia();
-    console.log("connected users", connectedUsers.value.length);
   } catch (error) {
     console.log(error);
   } finally {
     try {
       if (connectedUsers.value.length > 0) {
-        // we need to create a PC for each connected user
         for (const user of connectedUsers.value) {
           const { peerConnection, remoteStream } = await createPeerConnection(user.id);
           const offer = await peerConnection.createOffer({});
@@ -241,26 +236,86 @@ async function joinVoiceChannel() {
 }
 
 socketStore.socket.on("userLeftVoiceRoom", (data) => {
-  connectedUsers.value = data;
+  for (const newUser of data) {
+    let haveFoundUser = false;
+    for (const currentUser of connectedUsers.value) {
+      if (newUser.id === currentUser.id) {
+        haveFoundUser = true;
+        break;
+      }
+    }
+    if (!haveFoundUser) {
+      connectedUsers.value.push(newUser);
+    }
+  }
+
+  for (const currentUser of connectedUsers.value) {
+    let haveFoundUser = false;
+    for (const newUser of data) {
+      if (newUser.id === currentUser.id) {
+        haveFoundUser = true;
+        break;
+      }
+    }
+    if (!haveFoundUser) {
+      connectedUsers.value = connectedUsers.value.filter((user) => {
+        return user.id !== currentUser.id;
+      });
+    }
+  }
+  // connectedUsers.value = data;
   connectedUsers.value = connectedUsers.value.filter((user) => {
     return user.name !== useUserStore().userName;
   });
-  connectedUsers.value.forEach((user) => {
-    user.mediaStream = null;
+
+  connectedUsers.value = connectedUsers.value.filter((user) => {
+    return user.id !== null;
   });
+  // connectedUsers.value = data;
+  // connectedUsers.value = connectedUsers.value.filter((user) => {
+  //   return user.name !== useUserStore().userName;
+  // });
+  // connectedUsers.value.forEach((user) => {
+  //   user.mediaStream = null;
+  // });
 });
 
-// ! First step is to join the voice room
 socketStore.socket.on("userJoinedVoiceRoom", (data) => {
-  connectedUsers.value = data;
+  for (const newUser of data) {
+    let haveFoundUser = false;
+    for (const currentUser of connectedUsers.value) {
+      if (newUser.id === currentUser.id) {
+        haveFoundUser = true;
+        break;
+      }
+    }
+    if (!haveFoundUser) {
+      connectedUsers.value.push(newUser);
+    }
+  }
+
+  for (const currentUser of connectedUsers.value) {
+    let haveFoundUser = false;
+    for (const newUser of data) {
+      if (newUser.id === currentUser.id) {
+        haveFoundUser = true;
+        break;
+      }
+    }
+    if (!haveFoundUser) {
+      connectedUsers.value = connectedUsers.value.filter((user) => {
+        return user.id !== currentUser.id;
+      });
+    }
+  }
+  // connectedUsers.value = data;
   connectedUsers.value = connectedUsers.value.filter((user) => {
     return user.name !== useUserStore().userName;
   });
-  connectedUsers.value.forEach((user) => {
-    user.mediaStream = null;
-  });
 
-  // add mediastream null to the connected users
+  connectedUsers.value = connectedUsers.value.filter((user) => {
+    return user.id !== null;
+  });
   // connectedUsers.value.forEach((user) => {
   //   user.mediaStream = null;
   // });
