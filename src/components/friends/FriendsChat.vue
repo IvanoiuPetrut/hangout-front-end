@@ -47,10 +47,12 @@ onMounted(async () => {
   const { data: messagesFromServer, execute: executeGetMessagesForChat } = useAsyncRequest(() =>
     getMessagesFromFriendRoom(props.friend.id)
   );
+
   await executeGetMessagesForChat();
   if (messagesFromServer.value) {
     messages.value.push(...messagesFromServer.value);
   }
+
   await executeGetUserDetails();
 });
 
@@ -67,12 +69,14 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col w-full pt-4">
     <div class="px-4 overflow-y-auto max-h-[calc(100vh-12rem)]">
-      <ul v-if="userDetails && messages">
+      <ul v-if="userDetails && messages" class="flex flex-col gap-4">
         <li v-for="(message, index) in messages" :key="index">
           <MessageBubble
             :message="message.content"
             :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
             :photo-url="message.senderPhoto"
+            :sender-name="message.senderName"
+            :created-at="message.createdAt"
           />
         </li>
       </ul>

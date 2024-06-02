@@ -46,6 +46,7 @@ export type chatRoom = {
 export type message = {
   id: string;
   chatRoomId: string;
+  senderName: string;
   senderId: string;
   receiverId: string;
   senderPhoto: string;

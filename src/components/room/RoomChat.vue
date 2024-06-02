@@ -59,12 +59,14 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="overflow-y-auto">
-      <ul v-if="userDetails && newMessages">
+      <ul v-if="userDetails && newMessages" class="flex flex-col gap-4">
         <li v-for="(message, index) in newMessages" :key="index">
           <MessageBubble
             :message="message.content"
             :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
             :photo-url="message.senderPhoto"
+            :sender-name="message.senderName"
+            :created-at="message.createdAt"
           />
         </li>
       </ul>
