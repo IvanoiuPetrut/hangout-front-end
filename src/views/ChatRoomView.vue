@@ -11,7 +11,6 @@ import RoomMembers from "@/components/room/RoomMembers.vue";
 import RoomChat from "@/components/room/RoomChat.vue";
 import RoomSettings from "@/components/room/RoomSettings.vue";
 import RoomVoice from "@/components/room/RoomVoice.vue";
-//test
 const props = defineProps<{
   roomId: string;
 }>();
