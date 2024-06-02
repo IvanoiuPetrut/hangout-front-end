@@ -13,4 +13,16 @@ const backendInstanceForInteractor = axios.create({
   }
 });
 
-export { backendInstanceForAuth, backendInstanceForInteractor };
+const backendInstanceForInteractorWithImages = axios.create({
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "access-token": getCookie("access_token") || ""
+  }
+});
+
+export {
+  backendInstanceForAuth,
+  backendInstanceForInteractor,
+  backendInstanceForInteractorWithImages
+};

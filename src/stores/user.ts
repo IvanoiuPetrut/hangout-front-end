@@ -16,5 +16,9 @@ export const useUserStore = defineStore("user", () => {
     userName.value = name;
   }
 
-  return { userName, photo, setUserDetails, setUserName, userId };
+  function setPhoto(photoUrl: string) {
+    photo.value = photoUrl;
+  }
+
+  return { userName, photo, setUserDetails, setUserName, userId, setPhoto };
 });

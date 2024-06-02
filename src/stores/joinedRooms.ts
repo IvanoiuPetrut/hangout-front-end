@@ -14,8 +14,6 @@ export const useJoinedRoomsStore = defineStore("joinedRooms", () => {
     let joinedRoomsCount = 0;
     for (const room of joinedRooms.value) {
       if (room.ownerId === useUserStore().userId) {
-        console.log("room.ownerId", room.ownerId);
-        console.log("useUserStore().userId", useUserStore().userId);
         joinedRoomsCount++;
       }
     }

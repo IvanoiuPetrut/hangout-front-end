@@ -1,5 +1,8 @@
 import type { User } from "@/types/types";
-import { backendInstanceForInteractor } from "@/services/backendClient";
+import {
+  backendInstanceForInteractor,
+  backendInstanceForInteractorWithImages
+} from "@/services/backendClient";
 
 async function getUserDetails(): Promise<User> {
   const userDetails = await backendInstanceForInteractor.get("/user/details");
@@ -11,6 +14,17 @@ async function updateUserDetails(userName: string, password: string): Promise<Us
     username: userName
   };
   const userDetails = await backendInstanceForInteractor.patch("/user/details", body);
+  return userDetails.data;
+}
+
+async function updateUserPicture(file: File): Promise<User> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const userDetails = await backendInstanceForInteractorWithImages.post(
+    "/user/profile-picture",
+    formData
+  );
   return userDetails.data;
 }
 
@@ -27,4 +41,4 @@ async function getMultipleUsersDetails(userIds: Array<string>): Promise<Array<Us
   return userDetails.map((userDetail) => userDetail.data);
 }
 
-export { getUserDetails, updateUserDetails, getUsers, getMultipleUsersDetails };
+export { getUserDetails, updateUserDetails, getUsers, getMultipleUsersDetails, updateUserPicture };
