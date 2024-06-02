@@ -3,10 +3,12 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", () => {
   const userName = ref<undefined | string>(undefined);
+  const userId = ref<undefined | string>(undefined);
   const photo = ref<undefined | string>(undefined);
 
-  function setUserDetails(name: string, photoUrl: string) {
+  function setUserDetails(name: string, id: string, photoUrl: string) {
     userName.value = name;
+    userId.value = id;
     photo.value = photoUrl;
   }
 
@@ -14,5 +16,5 @@ export const useUserStore = defineStore("user", () => {
     userName.value = name;
   }
 
-  return { userName, photo, setUserDetails, setUserName };
+  return { userName, photo, setUserDetails, setUserName, userId };
 });

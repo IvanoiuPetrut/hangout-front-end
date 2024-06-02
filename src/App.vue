@@ -24,7 +24,6 @@ onMounted(async () => {
   await router.isReady();
 
   const code = router.currentRoute.value.query.code as string;
-  console.log(code);
 
   if (code) {
     try {
@@ -46,7 +45,7 @@ onMounted(async () => {
   }
 
   const userDetails = await getUserDetails();
-  useUserStore().setUserDetails(userDetails.username, userDetails.photo);
+  useUserStore().setUserDetails(userDetails.username, userDetails.id, userDetails.photo);
 });
 </script>
 

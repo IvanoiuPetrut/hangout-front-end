@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
+import { useAsyncRequest } from "@/helpers/asyncRequest";
+import { getFriends } from "@/services/friend/friendInteractor";
+import { useJoinedRoomsStore } from "@/stores/joinedRooms";
+
+const { data: friends, execute: executeGetFriends } = useAsyncRequest(() => getFriends());
+
+function calculateManagingRoomsPercentage(): number {
+  return (
+    (useJoinedRoomsStore().managingRoomsCount() / useJoinedRoomsStore().joinedRooms.length) * 100
+  );
+}
+
+onMounted(() => {
+  executeGetFriends();
+});
 </script>
 
 <template>
@@ -20,7 +36,7 @@ import { useUserStore } from "@/stores/user";
         </svg>
       </div>
       <div class="stat-title">Total Friends</div>
-      <div class="stat-value text-primary">{25.6K}</div>
+      <div class="stat-value text-primary">{{ friends?.length }}</div>
     </div>
 
     <div class="stat">
@@ -37,7 +53,7 @@ import { useUserStore } from "@/stores/user";
         </svg>
       </div>
       <div class="stat-title">Total rooms joined</div>
-      <div class="stat-value text-secondary">{2.6M}</div>
+      <div class="stat-value text-secondary">{{ useJoinedRoomsStore().joinedRooms.length }}</div>
     </div>
 
     <div class="stat">
@@ -48,9 +64,12 @@ import { useUserStore } from "@/stores/user";
           </div>
         </div>
       </div>
-      <div class="stat-value">{86%}</div>
+      <div class="stat-value">{{ calculateManagingRoomsPercentage() }}%</div>
       <div class="stat-title">Managing rooms</div>
-      <div class="stat-desc text-secondary">{31} out of {46}</div>
+      <div class="stat-desc text-secondary">
+        {{ useJoinedRoomsStore().managingRoomsCount() }} out of
+        {{ useJoinedRoomsStore().joinedRooms.length }} joined
+      </div>
     </div>
   </div>
 </template>
