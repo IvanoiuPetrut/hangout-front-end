@@ -48,7 +48,6 @@ function handleToggleMenuVisibility() {
     </div>
     <RouterLink :to="{ name: 'notifications' }" class="ml-auto mr-3">
       <div class="indicator">
-        <span class="indicator-item badge badge-secondary">99+</span>
         <button class="btn btn-sm btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"

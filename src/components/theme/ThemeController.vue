@@ -1,6 +1,6 @@
 <template>
   <div class="dropdown">
-    <div tabindex="0" role="button" class="btn btn-sm">
+    <div tabindex="0" role="button" class="btn btn-sm btn-ghost">
       Theme
       <svg
         width="12px"
