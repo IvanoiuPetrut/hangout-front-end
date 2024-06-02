@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
 import RoomVoiceActions from "@/components/room/room_voice/RoomVoiceActions.vue";
 import RoomVoiceConnectedUsers from "@/components/room/room_voice/RoomVoiceConnectedUsers.vue";
 import { useUserStore } from "@/stores/user";
@@ -46,14 +46,11 @@ async function answerAndCreatePeerConnection(
 
   peerConnection.addEventListener("icecandidate", (event) => {
     if (event.candidate) {
-      console.log("Sending ICE candidate");
-      setTimeout(() => {
-        socketStore.socket.emit("sendIceCandidateToTheOferrer", {
-          iceCandidate: event.candidate,
-          chatRoomId: props.roomId,
-          toSocketId: toSocketId
-        });
-      }, 5000);
+      socketStore.socket.emit("sendIceCandidateToTheOferrer", {
+        iceCandidate: event.candidate,
+        chatRoomId: props.roomId,
+        toSocketId: toSocketId
+      });
     }
   });
 
@@ -295,10 +292,6 @@ function handleEndCall() {
     chatRoomId: props.roomId
   });
 }
-
-onMounted(async () => {
-  console.log(connectedUsers.value.length);
-});
 
 onUnmounted(() => {
   handleEndCall();
