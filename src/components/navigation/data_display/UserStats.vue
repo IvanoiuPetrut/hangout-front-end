@@ -8,9 +8,12 @@ import { useJoinedRoomsStore } from "@/stores/joinedRooms";
 const { data: friends, execute: executeGetFriends } = useAsyncRequest(() => getFriends());
 
 function calculateManagingRoomsPercentage(): number {
-  return (
-    (useJoinedRoomsStore().managingRoomsCount() / useJoinedRoomsStore().joinedRooms.length) * 100
-  );
+  const percentage =
+    (useJoinedRoomsStore().managingRoomsCount() / useJoinedRoomsStore().joinedRooms.length) * 100;
+  if (isNaN(percentage)) {
+    return 0;
+  }
+  return percentage;
 }
 
 onMounted(() => {
@@ -68,7 +71,7 @@ onMounted(() => {
       <div class="stat-title">Managing rooms</div>
       <div class="stat-desc text-secondary">
         {{ useJoinedRoomsStore().managingRoomsCount() }} out of
-        {{ useJoinedRoomsStore().joinedRooms.length }} joined
+        {{ useJoinedRoomsStore().joinedRooms.length }}
       </div>
     </div>
   </div>
