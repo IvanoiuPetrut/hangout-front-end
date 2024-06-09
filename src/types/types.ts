@@ -54,6 +54,10 @@ export type message = {
   createdAt: string;
 };
 
+export type uploadFileReturn = {
+  fileUrl: string;
+};
+
 export type chatRoomDetails = {
   id: string;
   name: string;

@@ -87,7 +87,7 @@ onMounted(() => {
         <h3 v-if="selectedFriend" class="gap-4 px-4">
           <button
             @click="handleFriendProfileVisibility"
-            class="flex items-center gap-4 mx-auto text-xl text-primary font-bold hover:text-secondary focus:outline-none transition-colors"
+            class="flex items-center gap-4 mx-auto text-xl text-primary font-bold hover:text-accent focus:outline-none transition-colors"
           >
             <div class="avatar">
               <div class="w-6 rounded-full">

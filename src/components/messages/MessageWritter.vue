@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import SendFile from "@components/messages/SendFile.vue";
 
 const message = ref("");
 
 const emit = defineEmits<{
+  (e: "uploadFile", file: File): void;
   (e: "sendMessage", message: string): void;
 }>();
 
-const handleSendMessage = () => {
+function handleSendMessage() {
   if (!message.value) return;
   emit("sendMessage", message.value);
   message.value = "";
-};
+}
+
+function handleUploadFile(file: File) {
+  emit("uploadFile", file);
+}
 </script>
 
 <template>
@@ -34,19 +40,6 @@ const handleSendMessage = () => {
         />
       </svg>
     </button>
-    <button class="btn btn-sm bg-base-100 border-0 btn-square">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        class="w-6 h-6"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </button>
+    <SendFile @upload-file="handleUploadFile" />
   </label>
 </template>

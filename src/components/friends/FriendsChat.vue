@@ -9,6 +9,7 @@ import { getCookie } from "@helpers/cookie";
 import { useAsyncRequest } from "@helpers/asyncRequest";
 import { getMessagesFromFriendRoom } from "@services/messages/messagesInteractor";
 import { getUserDetails } from "@/services/user/userInteractor";
+import { uploadFile } from "@services/messages/messagesInteractor";
 import { useSocketStore } from "@/stores/socket";
 import type { Friend, message } from "@/types/types";
 
@@ -32,6 +33,20 @@ function handleSendMessage(message: string) {
     senderPhoto: useUserStore().photo,
     message
   });
+}
+
+async function handleUploadFile(file: File) {
+  try {
+    const data = await uploadFile(file);
+    useSocketStore().socket.emit("friendChatMessage", {
+      userToken: getCookie("access_token"),
+      friendId: props.friend.id,
+      senderPhoto: useUserStore().photo,
+      message: data.fileUrl
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 onMounted(async () => {
@@ -82,7 +97,7 @@ onUnmounted(() => {
       </ul>
     </div>
     <div class="px-4 mt-auto mb-2">
-      <MessageWritter @send-message="handleSendMessage" />
+      <MessageWritter @send-message="handleSendMessage" @upload-file="handleUploadFile" />
     </div>
   </div>
 </template>
