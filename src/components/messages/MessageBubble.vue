@@ -32,10 +32,7 @@ function getFileNameFromUrl(url: string): string {
 
 <template>
   <div class="flex gap-4">
-    <div
-      class="chat-image avatar"
-      :class="!isFileFromServer(message) ? 'self-center' : 'self-start'"
-    >
+    <div class="chat-image avatar self-start">
       <div class="w-10 rounded-full">
         <img v-if="photoUrl" alt="Profile photo" :src="props.photoUrl" />
         <img

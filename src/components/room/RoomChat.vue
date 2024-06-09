@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, nextTick } from "vue";
 import type { message } from "@/types/types";
 import { getCookie } from "@helpers/cookie";
 import { useUserStore } from "@/stores/user";
@@ -53,6 +53,16 @@ function handleFriendProfileVisibility() {
   selectedFriend.value = null;
 }
 
+function scrollToBottom() {
+  nextTick(() => {
+    const chat = document.querySelector(".users-chat");
+    console.log(chat);
+    if (chat) {
+      chat.scrollTop = chat.scrollHeight;
+    }
+  });
+}
+
 onMounted(async () => {
   newMessages.value.push(...props.messages);
   useSocketStore().socket.emit("joinChatRoom", {
@@ -62,8 +72,10 @@ onMounted(async () => {
 
   useSocketStore().socket.on("chatRoomChatMessage", (message) => {
     newMessages.value.push(message);
+    scrollToBottom();
   });
   await executeGetUserDetails();
+  scrollToBottom();
 });
 
 onUnmounted(() => {
@@ -84,7 +96,7 @@ onUnmounted(() => {
       @toggle-friend-profile-visibility="handleFriendProfileVisibility"
       class="fixed top-30 right-4 z-50"
     />
-    <div class="overflow-y-auto">
+    <div class="px-4 pb-4 overflow-y-auto max-h-[calc(100vh-12rem)] users-chat">
       <ul v-if="userDetails && newMessages" class="flex flex-col gap-4">
         <li v-for="(message, index) in newMessages" :key="index">
           <MessageBubble

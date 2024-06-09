@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, nextTick } from "vue";
 import { useUserStore } from "@/stores/user";
 
 import MessageWritter from "@/components/messages/MessageWritter.vue";
@@ -49,6 +49,16 @@ async function handleUploadFile(file: File) {
   }
 }
 
+function scrollToBottom() {
+  nextTick(() => {
+    const chat = document.querySelector(".users-chat");
+    console.log(chat);
+    if (chat) {
+      chat.scrollTop = chat.scrollHeight;
+    }
+  });
+}
+
 onMounted(async () => {
   useSocketStore().socket.emit("createFriendChat", {
     userToken: getCookie("access_token"),
@@ -57,6 +67,7 @@ onMounted(async () => {
 
   useSocketStore().socket.on("friendChatMessage", (message) => {
     messages.value.push(message);
+    scrollToBottom();
   });
 
   const { data: messagesFromServer, execute: executeGetMessagesForChat } = useAsyncRequest(() =>
@@ -69,6 +80,8 @@ onMounted(async () => {
   }
 
   await executeGetUserDetails();
+
+  scrollToBottom();
 });
 
 onUnmounted(() => {
@@ -83,7 +96,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col w-full pt-4">
-    <div class="px-4 overflow-y-auto max-h-[calc(100vh-12rem)]">
+    <div class="px-4 pb-4 overflow-y-auto max-h-[calc(100vh-12rem)] users-chat">
       <ul v-if="userDetails && messages" class="flex flex-col gap-4">
         <li v-for="(message, index) in messages" :key="index">
           <MessageBubble
