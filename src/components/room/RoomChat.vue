@@ -6,15 +6,18 @@ import { useUserStore } from "@/stores/user";
 import { useSocketStore } from "@/stores/socket";
 import { useAsyncRequest } from "@helpers/asyncRequest";
 import { getUserDetails } from "@/services/user/userInteractor";
+import type { Friend } from "@/types/types";
 
 import MessageWritter from "@/components/messages/MessageWritter.vue";
 import MessageBubble from "@components/messages/MessageBubble.vue";
+import FriendProfile from "@/components/friends/FriendProfile.vue";
 
 const props = defineProps<{
   messages: Array<message>;
   roomId: string;
 }>();
 
+const selectedFriend = ref<Friend | null>(null);
 const newMessages = ref<Array<message>>([]);
 
 const { data: userDetails, execute: executeGetUserDetails } = useAsyncRequest(() =>
@@ -33,6 +36,23 @@ function handleSendMessage(message: string) {
     message
   });
 }
+
+function handleSelectFriend(senderId: string, senderName: string, senderPhoto: string) {
+  if (senderName === useUserStore().userName) {
+    return;
+  }
+
+  selectedFriend.value = {
+    id: senderId,
+    username: senderName,
+    photo: senderPhoto
+  };
+}
+
+function handleFriendProfileVisibility() {
+  selectedFriend.value = null;
+}
+
 onMounted(async () => {
   newMessages.value.push(...props.messages);
   useSocketStore().socket.emit("joinChatRoom", {
@@ -58,6 +78,12 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col w-full h-full">
+    <FriendProfile
+      :friend="selectedFriend"
+      v-if="selectedFriend"
+      @toggle-friend-profile-visibility="handleFriendProfileVisibility"
+      class="fixed top-30 right-4 z-50"
+    />
     <div class="overflow-y-auto">
       <ul v-if="userDetails && newMessages" class="flex flex-col gap-4">
         <li v-for="(message, index) in newMessages" :key="index">
@@ -67,6 +93,9 @@ onUnmounted(() => {
             :photo-url="message.senderPhoto"
             :sender-name="message.senderName"
             :created-at="message.createdAt"
+            @toggle-selected-friend="
+              handleSelectFriend(message.senderId, message.senderName, message.senderPhoto)
+            "
           />
         </li>
       </ul>

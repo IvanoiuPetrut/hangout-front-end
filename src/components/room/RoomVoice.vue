@@ -26,7 +26,6 @@ const connectedUsers = ref<Array<ConnectedUser>>([]);
 const socketStore = useSocketStore();
 
 async function fetchUserMedia(): Promise<MediaStream> {
-  console.log("Fetching user media");
   const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   return stream;
 }

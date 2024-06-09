@@ -4,9 +4,13 @@ import moment from "moment";
 const props = defineProps<{
   fromWho: "me" | "friend";
   message: string;
-  photoUrl: string | undefined;
+  photoUrl: string;
   senderName: string;
   createdAt: string;
+}>();
+
+const emit = defineEmits<{
+  (e: "toggleSelectedFriend"): void;
 }>();
 
 function formatDate(isoString: string): string {
@@ -28,7 +32,12 @@ function formatDate(isoString: string): string {
     </div>
     <div>
       <div>
-        <span class="font-bold mr-4">{{ props.senderName }}</span>
+        <button
+          @click="emit('toggleSelectedFriend')"
+          class="font-bold mr-4 hover:underline hover:text-primary"
+        >
+          {{ senderName }}
+        </button>
         <span class="text-xs opacity-70">{{ formatDate(props.createdAt) }}</span>
       </div>
       <div class="">{{ message }}</div>
