@@ -8,6 +8,7 @@ const emit = defineEmits<{
 }>();
 
 const handleSendMessage = () => {
+  if (!message.value) return;
   emit("sendMessage", message.value);
   message.value = "";
 };
