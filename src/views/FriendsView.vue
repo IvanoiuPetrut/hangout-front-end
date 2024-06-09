@@ -84,17 +84,23 @@ onMounted(() => {
           </svg>
           Open
         </button>
-        <h3 v-if="selectedFriend" class="gap-4 px-4">
+        <h3
+          v-if="selectedFriend"
+          class="gap-4 px-4"
+          :class="{
+            'hidden sm:block': !isFriendsMenuVisible
+          }"
+        >
           <button
             @click="handleFriendProfileVisibility"
-            class="flex items-center gap-4 mx-auto text-xl text-primary font-bold hover:text-accent focus:outline-none transition-colors"
+            class="flex items-center justify-center w-full gap-4 text-xl text-primary font-bold hover:text-accent focus:outline-none transition-colors"
           >
-            <div class="avatar">
+            <div class="avatar hidden sm:block">
               <div class="w-6 rounded-full">
                 <img :src="selectedFriend.photo" />
               </div>
             </div>
-            <span>
+            <span class="ml-auto sm:ml-0">
               {{ selectedFriend.username }}
             </span>
           </button>

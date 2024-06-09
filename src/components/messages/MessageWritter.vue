@@ -26,7 +26,7 @@ function handleUploadFile(file: File) {
       v-model="message"
       v-on:keyup.enter="handleSendMessage"
       type="text"
-      class="grow bg-base-100"
+      class="bg-base-100 w-full"
     />
     <button @click="handleSendMessage" class="btn btn-sm bg-base-100 border-0 btn-square">
       <svg

@@ -11,6 +11,7 @@ import type { Friend } from "@/types/types";
 import MessageWritter from "@/components/messages/MessageWritter.vue";
 import MessageBubble from "@components/messages/MessageBubble.vue";
 import FriendProfile from "@/components/friends/FriendProfile.vue";
+import { uploadFile } from "@/services/messages/messagesInteractor";
 
 const props = defineProps<{
   messages: Array<message>;
@@ -63,6 +64,20 @@ function scrollToBottom() {
   });
 }
 
+async function handleUploadFile(file: File) {
+  try {
+    const data = await uploadFile(file);
+    useSocketStore().socket.emit("chatRoomChatMessage", {
+      userToken: getCookie("access_token"),
+      chatRoomId: props.roomId,
+      senderPhoto: useUserStore().photo,
+      message: data.fileUrl
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 onMounted(async () => {
   newMessages.value.push(...props.messages);
   useSocketStore().socket.emit("joinChatRoom", {
@@ -113,7 +128,7 @@ onUnmounted(() => {
       </ul>
     </div>
     <div class="mt-auto">
-      <MessageWritter @send-message="handleSendMessage" />
+      <MessageWritter @send-message="handleSendMessage" @upload-file="handleUploadFile" />
     </div>
   </div>
 </template>
