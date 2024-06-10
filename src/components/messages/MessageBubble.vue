@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import moment from "moment";
+import { Marked } from "marked";
+import DOMPurify from "dompurify";
+import hljs from "highlight.js";
+import { markedHighlight } from "marked-highlight";
+import "highlight.js/styles/atom-one-dark.css";
 
 const props = defineProps<{
   fromWho: "me" | "friend";
@@ -40,8 +45,20 @@ function getFileNameFromUrl(url: string): string {
   return url.split("/").pop()!;
 }
 
+const marked = new Marked(
+  markedHighlight({
+    langPrefix: "hljs language-",
+    highlight(code, lang, info) {
+      const language = hljs.getLanguage(lang) ? lang : "plaintext";
+      return hljs.highlight(code, { language }).value;
+    }
+  })
+);
+
 function formatMessage(message: string): string {
-  return message.replace(/\n/g, "<br>");
+  const html = marked.parse(message);
+  console.log(html);
+  return DOMPurify.sanitize(html);
 }
 </script>
 
@@ -108,7 +125,75 @@ function formatMessage(message: string): string {
         rel="noopener noreferrer"
         >{{ message }}</a
       >
-      <div v-else v-html="formatMessage(message)" class="text-base"></div>
+      <div v-else v-html="formatMessage(message)" class="text-base markdown-wrapper"></div>
     </div>
   </div>
 </template>
+
+<style>
+.markdown-wrapper ol li {
+  list-style-type: decimal;
+  margin-left: 1rem;
+}
+
+.markdown-wrapper ul li {
+  list-style-type: disc;
+  margin-left: 1rem;
+}
+
+.markdown-wrapper h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.markdown-wrapper h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.markdown-wrapper h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.markdown-wrapper h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.markdown-wrapper h5 {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.markdown-wrapper h6 {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.markdown-wrapper p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-wrapper blockquote {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid oklch(var(--p));
+  background-color: oklch(var(--p) / 0.05);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.markdown-wrapper pre {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--color-neutral);
+  border-radius: 0.5rem;
+}
+
+.markdown-wrapper code {
+  border-radius: 0.5rem;
+}
+</style>
