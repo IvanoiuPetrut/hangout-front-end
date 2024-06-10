@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, nextTick } from "vue";
+import { onMounted, onUnmounted, ref, nextTick, computed } from "vue";
 import type { message } from "@/types/types";
 import { getCookie } from "@helpers/cookie";
 import { useUserStore } from "@/stores/user";
@@ -17,6 +17,16 @@ const props = defineProps<{
   messages: Array<message>;
   roomId: string;
 }>();
+
+const messageWritterWrapper = ref<HTMLDivElement | null>(null);
+const messageWritterWrapperHeight = ref<number>(0);
+const resizeObserver = ref<ResizeObserver | null>(null);
+
+const chatSize = computed(() => {
+  return {
+    maxHeight: `calc(100vh - ${messageWritterWrapperHeight.value - 45}px - 12rem)`
+  };
+});
 
 const selectedFriend = ref<Friend | null>(null);
 const newMessages = ref<Array<message>>([]);
@@ -78,6 +88,12 @@ async function handleUploadFile(file: File) {
   }
 }
 
+function updateHeight() {
+  if (messageWritterWrapper.value) {
+    messageWritterWrapperHeight.value = messageWritterWrapper.value.offsetHeight;
+  }
+}
+
 onMounted(async () => {
   newMessages.value.push(...props.messages);
   useSocketStore().socket.emit("joinChatRoom", {
@@ -91,6 +107,9 @@ onMounted(async () => {
   });
   await executeGetUserDetails();
   scrollToBottom();
+  updateHeight();
+  resizeObserver.value = new ResizeObserver(updateHeight);
+  resizeObserver.value.observe(messageWritterWrapper.value!);
 });
 
 onUnmounted(() => {
@@ -100,6 +119,10 @@ onUnmounted(() => {
   });
 
   useSocketStore().socket.off("chatRoomChatMessage");
+
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect();
+  }
 });
 </script>
 
@@ -111,7 +134,7 @@ onUnmounted(() => {
       @toggle-friend-profile-visibility="handleFriendProfileVisibility"
       class="fixed top-30 right-4 z-50"
     />
-    <div class="px-4 pb-4 overflow-y-auto max-h-[calc(100vh-12rem)] users-chat">
+    <div class="px-4 pb-4 overflow-y-auto users-chat" :style="chatSize">
       <ul v-if="userDetails && newMessages" class="flex flex-col gap-4">
         <li v-for="(message, index) in newMessages" :key="index">
           <MessageBubble
@@ -127,7 +150,7 @@ onUnmounted(() => {
         </li>
       </ul>
     </div>
-    <div class="mt-auto">
+    <div class="mt-auto" ref="messageWritterWrapper">
       <MessageWritter @send-message="handleSendMessage" @upload-file="handleUploadFile" />
     </div>
   </div>

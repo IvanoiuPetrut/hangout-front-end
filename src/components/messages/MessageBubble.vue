@@ -39,6 +39,10 @@ function isNormalUrl(message: string): boolean {
 function getFileNameFromUrl(url: string): string {
   return url.split("/").pop()!;
 }
+
+function formatMessage(message: string): string {
+  return message.replace(/\n/g, "<br>");
+}
 </script>
 
 <template>
@@ -104,7 +108,7 @@ function getFileNameFromUrl(url: string): string {
         rel="noopener noreferrer"
         >{{ message }}</a
       >
-      <p v-else>{{ message }}</p>
+      <div v-else v-html="formatMessage(message)" class="text-base"></div>
     </div>
   </div>
 </template>

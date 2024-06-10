@@ -3,6 +3,7 @@ import { ref } from "vue";
 import SendFile from "@components/messages/SendFile.vue";
 
 const message = ref("");
+const rows = ref(1);
 
 const emit = defineEmits<{
   (e: "uploadFile", file: File): void;
@@ -10,25 +11,48 @@ const emit = defineEmits<{
 }>();
 
 function handleSendMessage() {
-  if (!message.value) return;
-  emit("sendMessage", message.value);
-  message.value = "";
+  if (message.value.trim()) {
+    emit("sendMessage", message.value);
+    console.log("Message sent: ", message.value);
+    message.value = "";
+    rows.value = 1;
+  }
 }
 
 function handleUploadFile(file: File) {
   emit("uploadFile", file);
 }
+
+function handleKeyUp(event: KeyboardEvent) {
+  console.log("Key pressed: ", event.key);
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    handleSendMessage();
+  }
+}
+
+function adjustRows() {
+  let lineCount = message.value.split("\n").length;
+  lineCount = Math.min(lineCount, 6);
+  rows.value = Math.max(lineCount, 1);
+}
 </script>
 
 <template>
-  <label class="input input-bordered flex items-center gap-2">
-    <input
+  <div class="relative">
+    <textarea
       v-model="message"
-      v-on:keyup.enter="handleSendMessage"
-      type="text"
-      class="bg-base-100 w-full"
-    />
-    <button @click="handleSendMessage" class="btn btn-sm bg-base-100 border-0 btn-square">
+      @keyup.enter.exact="handleKeyUp"
+      @keyup.shift.enter.stop
+      @input="adjustRows"
+      placeholder="Type a message..."
+      class="textarea textarea-bordered textarea-sm w-full pr-10"
+      :rows="rows"
+    ></textarea>
+    <button
+      @click="handleSendMessage"
+      class="btn btn-sm bg-base-100 border-0 btn-square absolute right-2 top-2"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -40,6 +64,6 @@ function handleUploadFile(file: File) {
         />
       </svg>
     </button>
-    <SendFile @upload-file="handleUploadFile" />
-  </label>
+    <SendFile @upload-file="handleUploadFile" class="absolute right-12 top-2" />
+  </div>
 </template>
