@@ -15,6 +15,25 @@ const emit = defineEmits<{
     class="flex flex-col gap-6 items-center py-2 w-12 md:w-16 border-r-2 border-neutral h-[calc(100vh-7.3rem)]"
   >
     <button
+      @click="emit('selectRoomContent', RoomContent.Chat)"
+      class="btn btn-sm md:btn-md btn-circle btn-outline"
+      :class="{ 'btn-primary': activeContent === RoomContent.Chat }"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-4 h-4 md:w-6 md:h-6"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
+
+    <button
       @click="emit('selectRoomContent', RoomContent.Voice)"
       class="btn btn-sm md:btn-md btn-circle btn-outline"
       :class="{ 'btn-primary': activeContent === RoomContent.Voice }"
@@ -33,24 +52,7 @@ const emit = defineEmits<{
         />
       </svg>
     </button>
-    <button
-      @click="emit('selectRoomContent', RoomContent.Chat)"
-      class="btn btn-sm md:btn-md btn-circle btn-outline"
-      :class="{ 'btn-primary': activeContent === RoomContent.Chat }"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        class="w-4 h-4 md:w-6 md:h-6"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </button>
+
     <button
       @click="emit('selectRoomContent', RoomContent.Members)"
       class="btn btn-sm md:btn-md btn-circle btn-outline"

@@ -11,10 +11,11 @@ import RoomMembers from "@/components/room/RoomMembers.vue";
 import RoomChat from "@/components/room/RoomChat.vue";
 import RoomSettings from "@/components/room/RoomSettings.vue";
 import RoomVoice from "@/components/room/RoomVoice.vue";
+
 const props = defineProps<{
   roomId: string;
 }>();
-//
+
 const selectedRoomContent = ref<RoomContent | null>(RoomContent.Chat);
 const { data: chatRoomDetails, execute: executeGetChatRoomDetails } = useAsyncRequest(() =>
   getChatRoomDetails(props.roomId)

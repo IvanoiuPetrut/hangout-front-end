@@ -37,6 +37,17 @@ function isPhoto(message: string): boolean {
   );
 }
 
+function isVideo(message: string): boolean {
+  return (
+    message.endsWith(".mp4") ||
+    message.endsWith(".webm") ||
+    message.endsWith(".ogg") ||
+    message.endsWith(".mov") ||
+    message.endsWith(".avi") ||
+    message.endsWith(".flv")
+  );
+}
+
 function isNormalUrl(message: string): boolean {
   return message.startsWith("http");
 }
@@ -92,6 +103,12 @@ function formatMessage(message: string): string {
       >
         <img :src="message" alt="File from server" class="w-full h-full" />
       </a>
+      <video
+        v-else-if="isVideo(message) && isFileFromServer(message)"
+        :src="message"
+        controls
+        class="w-full h-full"
+      ></video>
       <a
         v-else-if="isFileFromServer(message)"
         :href="message"
@@ -195,5 +212,6 @@ function formatMessage(message: string): string {
 
 .markdown-wrapper code {
   border-radius: 0.5rem;
+  white-space: pre-wrap;
 }
 </style>
