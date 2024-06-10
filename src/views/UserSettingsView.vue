@@ -151,6 +151,7 @@ async function handleSavePhoto() {
         <input
           type="file"
           class="file-input file-input-bordered file-input-xs w-full max-w-xs"
+          accept=".png,.jpg,.jpeg,.gif,.webp,.bmp"
           @change="handleFileChange"
         />
         <button

@@ -1,3 +1,27 @@
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+
+const selectedTheme = ref<string>("");
+
+const themes = [
+  { dispalyName: "Dark", value: "dark" },
+  { dispalyName: "Forest", value: "forest" },
+  { dispalyName: "Coffee", value: "coffee" },
+  { dispalyName: "Aqua", value: "aqua" }
+];
+
+function handleThemeChange(theme: string): void {
+  selectedTheme.value = theme;
+  localStorage.setItem("theme", theme);
+  document.documentElement.setAttribute("data-theme", theme);
+}
+
+onMounted(() => {
+  selectedTheme.value = localStorage.getItem("theme") || themes[0].value;
+  document.documentElement.setAttribute("data-theme", selectedTheme.value);
+});
+</script>
+
 <template>
   <div class="dropdown">
     <div tabindex="0" role="button" class="btn btn-sm btn-ghost">
@@ -13,49 +37,14 @@
       </svg>
     </div>
     <ul tabindex="0" class="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box">
-      <li>
+      <li v-for="theme in themes" :key="theme.value" @click="handleThemeChange(theme.value)">
         <input
           type="radio"
           name="theme-dropdown"
           class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-          aria-label="Default"
-          value="default"
-        />
-      </li>
-      <li>
-        <input
-          type="radio"
-          name="theme-dropdown"
-          class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-          aria-label="Retro"
-          value="retro"
-        />
-      </li>
-      <li>
-        <input
-          type="radio"
-          name="theme-dropdown"
-          class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-          aria-label="Cyberpunk"
-          value="cyberpunk"
-        />
-      </li>
-      <li>
-        <input
-          type="radio"
-          name="theme-dropdown"
-          class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-          aria-label="Valentine"
-          value="valentine"
-        />
-      </li>
-      <li>
-        <input
-          type="radio"
-          name="theme-dropdown"
-          class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-          aria-label="Aqua"
-          value="aqua"
+          :aria-label="theme.dispalyName"
+          :value="theme.value"
+          :checked="theme.value === selectedTheme"
         />
       </li>
     </ul>

@@ -36,7 +36,7 @@ onMounted(async () => {
 
 <template>
   <h3 class="font-bold text-xl mb-2">Chat room requests - {{ chatRoomInvites?.length }}</h3>
-  <ul class="flex flex-col gap-2" v-if="chatRoomInvites">
+  <ul class="flex flex-col gap-2" v-if="chatRoomInvites!.length > 0">
     <li
       v-for="request in chatRoomInvites"
       :key="request.id"
