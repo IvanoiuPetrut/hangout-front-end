@@ -36,7 +36,7 @@ onMounted(async () => {
 
 <template>
   <h3 class="font-bold text-xl mb-2">Chat room requests - {{ chatRoomInvites?.length }}</h3>
-  <ul class="flex flex-col gap-2" v-if="chatRoomInvites!.length > 0">
+  <ul class="flex flex-col gap-2" v-if="chatRoomInvites">
     <li
       v-for="request in chatRoomInvites"
       :key="request.id"
@@ -83,6 +83,6 @@ onMounted(async () => {
         </button>
       </div>
     </li>
+    <li v-if="chatRoomInvites.length == 0" class="opacity-70">No chat room requests</li>
   </ul>
-  <p class="opacity-70" v-else>No chat room requests</p>
 </template>

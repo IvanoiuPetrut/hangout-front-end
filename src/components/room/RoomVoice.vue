@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from "vue";
 import RoomVoiceActions from "@/components/room/room_voice/RoomVoiceActions.vue";
-import RoomVoiceConnectedUsers from "@/components/room/room_voice/RoomVoiceConnectedUsers.vue";
 import { useUserStore } from "@/stores/user";
 import LocalStream from "@/components/room/room_voice/LocalStream.vue";
 import RemoteStream from "@/components/room/room_voice/RemoteStream.vue";
@@ -312,10 +311,8 @@ onUnmounted(() => {
         :photo="user.photo"
       />
     </div>
-    {{ connectedUsers }}
 
     <div class="mt-auto">
-      <RoomVoiceConnectedUsers />
       <RoomVoiceActions
         @toggleAudio="handleToggleAudio"
         @toggleCamera="handleToggleCamera"

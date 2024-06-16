@@ -69,7 +69,7 @@ const marked = new Marked(
 function formatMessage(message: string): string {
   const html = marked.parse(message);
   console.log(html);
-  return DOMPurify.sanitize(html);
+  return DOMPurify.sanitize(html as string);
 }
 </script>
 

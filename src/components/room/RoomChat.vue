@@ -11,7 +11,7 @@ import type { Friend } from "@/types/types";
 import MessageWritter from "@/components/messages/MessageWritter.vue";
 import MessageBubble from "@components/messages/MessageBubble.vue";
 import FriendProfile from "@/components/friends/FriendProfile.vue";
-import { uploadFile } from "@/services/messages/messagesInteractor";
+import { uploadFile, summarizeMessages } from "@/services/messages/messagesInteractor";
 
 const props = defineProps<{
   messages: Array<message>;
@@ -21,6 +21,9 @@ const props = defineProps<{
 const messageWritterWrapper = ref<HTMLDivElement | null>(null);
 const messageWritterWrapperHeight = ref<number>(0);
 const resizeObserver = ref<ResizeObserver | null>(null);
+const aiModeState = ref(false);
+const checkedMessagesForAi = ref<Array<string>>([]);
+const loadingSummarization = ref(false);
 
 const chatSize = computed(() => {
   return {
@@ -37,6 +40,43 @@ const { data: userDetails, execute: executeGetUserDetails } = useAsyncRequest(()
 
 function whoIsOwnerOfMessage(senderId: string, userId: string) {
   return senderId === userId ? "me" : "friend";
+}
+
+function handleSetAiMode() {
+  aiModeState.value = !aiModeState.value;
+  if (!aiModeState.value) {
+    checkedMessagesForAi.value = [];
+  }
+}
+
+async function handleSummarizeMessages() {
+  const formatedMessages: Array<{ name: string; content: string }> = checkedMessagesForAi.value.map(
+    (message) => {
+      let [name, content] = message.split(" and content: ");
+      name = name.replace("Sender name: ", "");
+      return { name, content };
+    }
+  );
+  const { data: summarizedMessages, execute: executeSummarizeMessages } = useAsyncRequest(() =>
+    summarizeMessages(formatedMessages)
+  );
+  loadingSummarization.value = true;
+  await executeSummarizeMessages();
+  loadingSummarization.value = false;
+  const contentForMessage = summarizedMessages.value;
+  newMessages.value.push({
+    id: "ai",
+    chatRoomId: "ai",
+    senderName: "AI",
+    senderId: "ai",
+    receiverId: "ai",
+    senderPhoto: "",
+    content: contentForMessage as string,
+    createdAt: new Date().toISOString()
+  });
+  scrollToBottom();
+  aiModeState.value = !aiModeState.value;
+  checkedMessagesForAi.value = [];
 }
 
 function handleSendMessage(message: string) {
@@ -137,21 +177,45 @@ onUnmounted(() => {
     <div class="px-4 pb-4 overflow-y-auto users-chat" :style="chatSize">
       <ul v-if="userDetails && newMessages" class="flex flex-col gap-4">
         <li v-for="(message, index) in newMessages" :key="index">
-          <MessageBubble
-            :message="message.content"
-            :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
-            :photo-url="message.senderPhoto"
-            :sender-name="message.senderName"
-            :created-at="message.createdAt"
-            @toggle-selected-friend="
-              handleSelectFriend(message.senderId, message.senderName, message.senderPhoto)
-            "
-          />
+          <div class="flex gap-2">
+            <input
+              v-if="aiModeState"
+              type="checkbox"
+              :value="`Sender name: ${message.senderName} and content: ${message.content}`"
+              v-model="checkedMessagesForAi"
+              class="checkbox mt-2"
+            />
+            <MessageBubble
+              :message="message.content"
+              :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
+              :photo-url="message.senderPhoto"
+              :sender-name="message.senderName"
+              :created-at="message.createdAt"
+              @toggle-selected-friend="
+                handleSelectFriend(message.senderId, message.senderName, message.senderPhoto)
+              "
+            />
+          </div>
         </li>
       </ul>
     </div>
+    <div
+      v-if="aiModeState"
+      class="flex flex-col items-center gap-4 absolute bot-0 right-1/2 transform translate-x-3/4 bg-base-200 p-4 rounded-lg shadow-lg border border-neutral"
+    >
+      <p class="">Check messages that you want to be summarize</p>
+      <div v-if="!loadingSummarization" class="flex gap-8">
+        <button @click="handleSummarizeMessages" class="btn btn-xs btn-primary">Summarize</button>
+        <button @click="handleSetAiMode" class="btn btn-xs btn-error">Cancel</button>
+      </div>
+      <span v-else class="loading loading-spinner loading-md"></span>
+    </div>
     <div class="mt-auto" ref="messageWritterWrapper">
-      <MessageWritter @send-message="handleSendMessage" @upload-file="handleUploadFile" />
+      <MessageWritter
+        @send-message="handleSendMessage"
+        @upload-file="handleUploadFile"
+        @set-ai-mode="handleSetAiMode"
+      />
     </div>
   </div>
 </template>
