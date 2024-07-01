@@ -4,6 +4,8 @@ import { RoomContent } from "@/types/types";
 import { getChatRoomDetails } from "@/services/chatRoom/chatRoomInteractor";
 import { useAsyncRequest } from "@/helpers/asyncRequest";
 import { onBeforeRouteUpdate } from "vue-router";
+import { useSocketStore } from "@/stores/socket";
+import { useUserStore } from "@/stores/user";
 
 import QuickActionMenu from "@/components/room/QuickActionMenu.vue";
 import BaseHeaderChatRoom from "@/components/room/BaseHeader.vue";
@@ -24,6 +26,23 @@ const { data: chatRoomDetails, execute: executeGetChatRoomDetails } = useAsyncRe
 function handleSelectRoomContent(content: RoomContent): void {
   selectedRoomContent.value = content;
 }
+
+async function handleUserKicked(userId: string): Promise<void> {
+  console.log("kicking user", userId);
+  useSocketStore().socket.emit("kickUser", {
+    chatRoomId: props.roomId,
+    userId
+  });
+  await executeGetChatRoomDetails();
+}
+
+useSocketStore().socket.on("userKicked", async (payload) => {
+  if (payload.userId === useUserStore().userId) {
+    window.location.href = "/";
+  } else {
+    await executeGetChatRoomDetails();
+  }
+});
 
 onBeforeRouteUpdate(async (to, from, next) => {
   if (to.params.roomId !== from.params.roomId) {
@@ -50,6 +69,8 @@ onMounted(async () => {
         v-show="selectedRoomContent === RoomContent.Members"
         :members="chatRoomDetails.members"
         :owner-id="chatRoomDetails.owner.id"
+        :room-id="props.roomId"
+        @user-kicked="handleUserKicked"
       />
       <RoomChat
         v-show="selectedRoomContent === RoomContent.Chat"

@@ -1,15 +1,26 @@
 <script setup lang="ts">
 import type { User } from "@/types/types";
 import QuickActionMemberSettings from "@components/room/QuickActionMemberSettings.vue";
+import { useUserStore } from "@/stores/user";
+
+const props = defineProps<{
+  members: Array<User>;
+  ownerId: string;
+  roomId: string;
+}>();
+
+const emit = defineEmits<{
+  (e: "userKicked", userId: string): void;
+}>();
 
 function isUserOwner(ownerId: string, userId: string): boolean {
   return ownerId === userId;
 }
 
-const props = defineProps<{
-  members: Array<User>;
-  ownerId: string;
-}>();
+function isTheLoggedUser(userId: string): boolean {
+  const loggedUserId = useUserStore().userId;
+  return loggedUserId === userId;
+}
 </script>
 
 <template>
@@ -35,7 +46,10 @@ const props = defineProps<{
 
       <QuickActionMemberSettings
         :owner-id="props.ownerId"
-        v-if="!isUserOwner(props.ownerId, member.id)"
+        :user-id="member.id"
+        :room-id="props.roomId"
+        @user-kicked="emit('userKicked', $event)"
+        v-if="!isUserOwner(props.ownerId, member.id) && !isTheLoggedUser(member.id)"
       />
     </li>
   </ul>

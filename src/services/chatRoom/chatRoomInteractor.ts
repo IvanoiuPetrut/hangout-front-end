@@ -47,6 +47,14 @@ async function declineInvite(inviteId: string): Promise<void> {
   await backendInstanceForInteractor.post(`/chat-room/reject-invite/${inviteId}`);
 }
 
+async function kickUser(roomId: string, userId: string): Promise<void> {
+  const body = {
+    chatRoomId: roomId,
+    userToKickId: userId
+  };
+  await backendInstanceForInteractor.post("/chat-room/kick-user", body);
+}
+
 export {
   getChatRoomDetails,
   createChatRoom,
@@ -55,5 +63,6 @@ export {
   sendInviteToChatRoom,
   getInvites,
   acceptInvite,
-  declineInvite
+  declineInvite,
+  kickUser
 };
