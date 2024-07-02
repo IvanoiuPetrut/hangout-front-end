@@ -55,6 +55,22 @@ async function kickUser(roomId: string, userId: string): Promise<void> {
   await backendInstanceForInteractor.post("/chat-room/kick-user", body);
 }
 
+async function editName(roomId: string, name: string): Promise<void> {
+  const body = {
+    chatRoomId: roomId,
+    name: name
+  };
+  await backendInstanceForInteractor.post("/chat-room/edit-name", body);
+}
+
+async function editDescription(roomId: string, description: string): Promise<void> {
+  const body = {
+    chatRoomId: roomId,
+    description: description
+  };
+  await backendInstanceForInteractor.post("/chat-room/edit-description", body);
+}
+
 export {
   getChatRoomDetails,
   createChatRoom,
@@ -64,5 +80,7 @@ export {
   getInvites,
   acceptInvite,
   declineInvite,
-  kickUser
+  kickUser,
+  editName,
+  editDescription
 };

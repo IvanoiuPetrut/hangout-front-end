@@ -36,6 +36,12 @@ async function handleUserKicked(userId: string): Promise<void> {
   await executeGetChatRoomDetails();
 }
 
+function handleUpdateRoomName(newName: string): void {
+  if (chatRoomDetails && chatRoomDetails.value) {
+    chatRoomDetails.value.name = newName;
+  }
+}
+
 useSocketStore().socket.on("userKicked", async (payload) => {
   if (payload.userId === useUserStore().userId) {
     window.location.href = "/";
@@ -77,7 +83,14 @@ onMounted(async () => {
         :messages="chatRoomDetails.messages"
         :room-id="props.roomId"
       />
-      <RoomSettings v-show="selectedRoomContent === RoomContent.Settings" />
+      <RoomSettings
+        v-show="selectedRoomContent === RoomContent.Settings"
+        :room-id="props.roomId"
+        :room-name="chatRoomDetails.name"
+        :room-description="chatRoomDetails.description"
+        :owner-id="chatRoomDetails.owner.id"
+        @update-room-name="handleUpdateRoomName"
+      />
       <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" :room-id="props.roomId" />
     </div>
   </div>

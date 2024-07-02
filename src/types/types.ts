@@ -61,6 +61,7 @@ export type uploadFileReturn = {
 export type chatRoomDetails = {
   id: string;
   name: string;
+  description: string;
   owner: User;
   members: Array<User>;
   messages: Array<message>;
