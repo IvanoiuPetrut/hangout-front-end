@@ -71,6 +71,14 @@ async function editDescription(roomId: string, description: string): Promise<voi
   await backendInstanceForInteractor.post("/chat-room/edit-description", body);
 }
 
+async function leaveChatRoom(roomId: string): Promise<void> {
+  await backendInstanceForInteractor.post(`/chat-room/leave/${roomId}`);
+}
+
+async function deleteChatRoom(roomId: string): Promise<void> {
+  await backendInstanceForInteractor.post(`/chat-room/delete/${roomId}`);
+}
+
 export {
   getChatRoomDetails,
   createChatRoom,
@@ -82,5 +90,7 @@ export {
   declineInvite,
   kickUser,
   editName,
-  editDescription
+  editDescription,
+  leaveChatRoom,
+  deleteChatRoom
 };

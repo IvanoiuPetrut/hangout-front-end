@@ -2,7 +2,12 @@
 import { ref } from "vue";
 import BaseAlert from "../alert/BaseAlert.vue";
 import { useUserStore } from "@/stores/user";
-import { editName, editDescription } from "@/services/chatRoom/chatRoomInteractor";
+import {
+  editName,
+  editDescription,
+  deleteChatRoom,
+  leaveChatRoom
+} from "@/services/chatRoom/chatRoomInteractor";
 
 const props = defineProps<{
   roomId: string;
@@ -76,6 +81,16 @@ function handleCancelNewDescription() {
   newDescription.value = roomDescription.value;
   isDescriptionEdit.value = false;
 }
+
+async function handleDeleteChatRoom() {
+  await deleteChatRoom(props.roomId);
+  window.location.href = "/";
+}
+
+async function handleLeaveChatRoom() {
+  await leaveChatRoom(props.roomId);
+  window.location.href = "/";
+}
 </script>
 
 <template>
@@ -104,7 +119,7 @@ function handleCancelNewDescription() {
           />
         </svg>
       </button>
-      <div v-else>
+      <div v-else-if="useUserStore().userId === props.ownerId">
         <div class="flex gap-2">
           <button @click="handleAcceptNewName" class="btn btn-circle btn-xs btn-success">
             <svg
@@ -141,8 +156,11 @@ function handleCancelNewDescription() {
       <p v-if="!isDescriptionEdit" class="text-base opacity-70 max-w-screen-sm">
         {{ roomDescription }}
       </p>
-      <div v-else>
-        <textarea v-model="newDescription" class="textarea textarea-bordered w-full"></textarea>
+      <div v-else class="w-48 lg:w-96">
+        <textarea
+          v-model="newDescription"
+          class="textarea textarea-bordered w-full text-xs md:text-md lg:text-lg h-32 lg:h-64"
+        ></textarea>
       </div>
       <button
         v-if="useUserStore().userId === props.ownerId && !isDescriptionEdit"
@@ -160,7 +178,7 @@ function handleCancelNewDescription() {
           />
         </svg>
       </button>
-      <div v-else class="flex gap-2">
+      <div v-else-if="useUserStore().userId === props.ownerId" class="flex gap-2">
         <button @click="handleAcceptNewDescription" class="btn btn-circle btn-xs btn-success">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -191,9 +209,75 @@ function handleCancelNewDescription() {
         </button>
       </div>
     </div>
-    <button v-if="useUserStore().userId === props.ownerId" class="btn btn-sm btn-error">
+
+    <button
+      v-if="useUserStore().userId === props.ownerId"
+      class="btn btn-error btn-sm"
+      onclick="modal_delete_server.showModal()"
+    >
       Delete server
     </button>
-    <button v-else class="btn btn-sm">Leave server</button>
+    <dialog id="modal_delete_server" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold flex gap-4 items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Confirm delete
+        </h3>
+        <p class="py-4">
+          Do you really want to delete the chat room? This process cannot be undone.
+        </p>
+        <div class="modal-action">
+          <form method="dialog" class="flex gap-4">
+            <button @click="handleDeleteChatRoom" class="btn btn-sm btn-error">Delete</button>
+            <button class="btn btn-sm">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <button
+      v-if="useUserStore().userId !== props.ownerId"
+      class="btn btn-sm"
+      onclick="modal_leave_server.showModal()"
+    >
+      Leave server
+    </button>
+    <dialog id="modal_leave_server" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold flex gap-4 items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Confirm leave
+        </h3>
+        <p class="py-4">Do you really want to leave the chat room?</p>
+        <div class="modal-action">
+          <form method="dialog" class="flex gap-4">
+            <button @click="handleLeaveChatRoom" class="btn btn-sm btn-error">Leave</button>
+            <button class="btn btn-sm">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </div>
 </template>
