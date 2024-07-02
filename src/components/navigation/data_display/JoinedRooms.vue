@@ -70,5 +70,5 @@ onMounted(async () => {
       </RouterLink>
     </li>
   </ul>
-  <p v-else>No chat rooms joined</p>
+  <p v-else class="opacity-70">No chat rooms joined</p>
 </template>

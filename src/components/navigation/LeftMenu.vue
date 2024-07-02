@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
 import JoinedRooms from "@components/navigation/data_display/JoinedRooms.vue";
+import { useUserStore } from "@/stores/user";
 
 const emit = defineEmits<{
   (e: "toggleMenuVisibility"): void;
@@ -14,6 +15,11 @@ function handleToggleMenuVisibility(): void {
   if (smallScreen) {
     emit("toggleMenuVisibility");
   }
+}
+
+function handleLogout(): void {
+  useUserStore().logout();
+  window.location.href = logoutUrl;
 }
 </script>
 
@@ -70,7 +76,7 @@ function handleToggleMenuVisibility(): void {
     </li>
     <li><JoinedRooms /></li>
     <li class="mt-auto">
-      <a :href="logoutUrl">
+      <button @click="handleLogout">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -84,8 +90,8 @@ function handleToggleMenuVisibility(): void {
           />
         </svg>
 
-        Logout</a
-      >
+        Logout
+      </button>
     </li>
     <BaseAvatar />
   </ul>
