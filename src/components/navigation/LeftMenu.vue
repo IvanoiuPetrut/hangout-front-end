@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
 import JoinedRooms from "@components/navigation/data_display/JoinedRooms.vue";
+import { deleteCookie } from "@/helpers/cookie";
 import { useUserStore } from "@/stores/user";
 
 const emit = defineEmits<{
@@ -19,7 +20,12 @@ function handleToggleMenuVisibility(): void {
 
 function handleLogout(): void {
   useUserStore().logout();
-  window.location.href = logoutUrl;
+  deleteCookie("access_token");
+  deleteCookie("expires_in");
+  deleteCookie("refresh_token");
+  setTimeout(() => {
+    window.location.href = logoutUrl;
+  }, 200);
 }
 </script>
 

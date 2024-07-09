@@ -8,7 +8,7 @@ import CardOverlayImage from "@/components/navigation/data_display/CardOverlayIm
   <main class="flex flex-col h-[calc(100vh-4.4rem)] pt-12">
     <UserStats class="mx-auto" />
 
-    <div class="flex flex-col md:flex-row gap-12 mx-auto mt-auto">
+    <!-- <div class="flex flex-col md:flex-row gap-12 mx-auto mt-auto">
       <CardOverlayImage :background-url="'/src/assets/img/rooms.svg'">
         <template #title> Most frequent rooms </template>
         <template #content>
@@ -33,7 +33,7 @@ import CardOverlayImage from "@/components/navigation/data_display/CardOverlayIm
           </template>
         </CardOverlayImage>
       </div>
-    </div>
+    </div> -->
     <BaseFooter class="mt-auto" />
   </main>
 </template>

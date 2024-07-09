@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Friend } from "@/types/types";
 import InviteToRoom from "@/components/friends/InviteToRoom.vue";
+import { removeFriend } from "@/services/friend/friendInteractor";
 
 const props = defineProps<{
   friend: Friend;
@@ -9,6 +10,10 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "toggleFriendProfileVisibility"): void;
 }>();
+
+async function handleRemoveFriend() {
+  await removeFriend(props.friend.id);
+}
 </script>
 
 <template>
@@ -39,6 +44,6 @@ const emit = defineEmits<{
       </div>
     </div>
     <InviteToRoom :friend="props.friend" />
-    <button class="btn btn-sm btn-neutral">Remove friend</button>
+    <button @click="handleRemoveFriend" class="btn btn-sm btn-neutral">Remove friend</button>
   </div>
 </template>

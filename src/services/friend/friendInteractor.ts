@@ -45,11 +45,17 @@ async function getFriends(): Promise<Array<Friend>> {
   return friends.data;
 }
 
+async function removeFriend(friendId: string): Promise<void> {
+  await backendInstanceForInteractor.delete("/friend/delete/" + friendId);
+  window.location.reload();
+}
+
 export {
   sendFriendRequest,
   getFriendRequests,
   getPendingFriendRequests,
   acceptFriendRequest,
   declineFriendRequest,
-  getFriends
+  getFriends,
+  removeFriend
 };

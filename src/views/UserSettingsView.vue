@@ -18,6 +18,10 @@ const photoSuccess = ref(false);
 const photoToBig = ref(false);
 
 async function handleSaveSettings() {
+  if (password.value) {
+    console.log(password.value);
+  }
+
   await execute();
   if (!error.value) {
     useUserStore().setUserName(userName.value);
@@ -119,7 +123,7 @@ async function handleSavePhoto() {
             />
           </label>
         </div>
-        <div>
+        <div v-if="false">
           <label class="form-control w-full max-w-xs">
             <div class="label font-bold uppercase">
               <span class="label-text">Password</span>

@@ -20,6 +20,7 @@ function handleToggleMenuVisibility(isMenuVisible: boolean): void {
 }
 
 onMounted(async () => {
+  console.log("App mounted");
   const router = useRouter();
   await router.isReady();
 
@@ -31,8 +32,6 @@ onMounted(async () => {
       setCookie("access_token", tokens.accessToken, 1);
       setCookie("expires_in", tokens.idToken, 1);
       setCookie("refresh_token", tokens.refreshToken, 1);
-
-      router.push({ path: router.currentRoute.value.path });
     } catch (error) {
       console.log(error);
     }

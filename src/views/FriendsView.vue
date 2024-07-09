@@ -93,16 +93,14 @@ onMounted(() => {
         >
           <button
             @click="handleFriendProfileVisibility"
-            class="flex items-center justify-center w-full gap-4 text-xl text-primary font-bold hover:text-accent focus:outline-none transition-colors"
+            class="flex items-center justify-center w-full text-xl text-primary font-bold hover:text-accent focus:outline-none transition-colors"
           >
             <div class="avatar hidden sm:block">
               <div class="w-6 rounded-full">
                 <img :src="selectedFriend.photo" />
               </div>
             </div>
-            <span class="ml-auto sm:ml-0">
-              {{ selectedFriend.username }}
-            </span>
+            <span class="ml-auto sm:ml-0"> {{ selectedFriend.username }} </span>
           </button>
         </h3>
         <h3

@@ -1,4 +1,5 @@
 import type { User } from "@/types/types";
+import { getCookie } from "@/helpers/cookie";
 import {
   backendInstanceForInteractor,
   backendInstanceForInteractorWithImages
@@ -6,6 +7,7 @@ import {
 
 async function getUserDetails(): Promise<User> {
   const userDetails = await backendInstanceForInteractor.get("/user/details");
+  console.log(getCookie("access_token"));
   return userDetails.data;
 }
 

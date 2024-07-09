@@ -185,7 +185,7 @@ onUnmounted(() => {
       class="flex flex-col items-center gap-4 absolute bot-0 right-1/2 transform translate-x-3/4 bg-base-200 p-4 rounded-lg shadow-lg border border-neutral"
     >
       <p class="">Check messages that you want to be summarize</p>
-      <div v-if="loadingSummarization" class="flex gap-8">
+      <div v-if="!loadingSummarization" class="flex gap-8">
         <button @click="handleSummarizeMessages" class="btn btn-xs btn-primary">Summarize</button>
         <button @click="handleSetAiMode" class="btn btn-xs btn-error">Cancel</button>
       </div>

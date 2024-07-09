@@ -21,6 +21,7 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function logout() {
+    console.log("logout");
     userName.value = undefined;
     userId.value = undefined;
     photo.value = undefined;
