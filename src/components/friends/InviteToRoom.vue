@@ -29,10 +29,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <button class="btn btn-sm btn-primary mb-2" onclick="my_modal_1.showModal()">
+  <button class="btn btn-sm btn-primary mb-2" onclick="modal_profile.showModal()">
     Invite to room
   </button>
-  <dialog id="my_modal_1" class="modal">
+  <dialog id="modal_profile" class="modal">
     <div class="modal-box">
       <h3 class="font-bold text-lg">Rooms where the user can be invited:</h3>
       <label class="form-control w-full max-w-xs py-4">

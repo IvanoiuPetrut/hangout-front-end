@@ -52,6 +52,7 @@ useSocketStore().socket.on("userKicked", async (payload) => {
 
 onBeforeRouteUpdate(async (to, from, next) => {
   if (to.params.roomId !== from.params.roomId) {
+    chatRoomDetails.value = null;
     await executeGetChatRoomDetails();
   }
   next();
