@@ -1,5 +1,5 @@
 <a href="#">
-    <img src="https://i.postimg.cc/zXWvtRHy/pngwing-com.png" alt="Weather app logo" align="right" height="60" />
+    <img src="https://i.postimg.cc/Bv6Cnp9z/group.png" alt="Weather app logo" align="right" height="60" />
 </a>
 
 # Hangout
