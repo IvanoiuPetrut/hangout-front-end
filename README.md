@@ -9,7 +9,8 @@ Hangout is web app that allows you to communicate with other persons, either tho
 <a href="https://www.youtube.com/watch?v=HNb0TTiL960">Hangout Demo</a>
 
 <p align="center">
-  <img src="https://repository-images.githubusercontent.com/507885601/db5f7caa-3f2e-471d-8c3e-b569f95cd2dd" alt="Photo of the presentation of the project"/>
+  <img src="https://i.postimg.cc/Y0rTqW3C/image-mare.png" alt="Photo of the presentation of the project"/>
+  <img src="https://i.postimg.cc/xTFBnqb9/imageaudiovideo.png" alt="Photo of the presentation of the project"/>
 </p>
 
 ## Features
