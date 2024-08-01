@@ -1,52 +1,42 @@
-# hangout-frontend
+<a href="#">
+    <img src="https://i.postimg.cc/zXWvtRHy/pngwing-com.png" alt="Weather app logo" align="right" height="60" />
+</a>
 
-This template should help get you started developing with Vue 3 in Vite.
+# Hangout
 
-## Recommended IDE Setup
+Hangout is web app that allows you to communicate with other persons, either thorough a direct message chat or by using an audio video channel, leveraging peer to peer connection. It also supports messages with media conent, markdown and code.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+<a href="https://www.youtube.com/watch?v=HNb0TTiL960">Hangout Demo</a>
 
-## Type Support for `.vue` Imports in TS
+<p align="center">
+  <img src="https://repository-images.githubusercontent.com/507885601/db5f7caa-3f2e-471d-8c3e-b569f95cd2dd" alt="Photo of the presentation of the project"/>
+</p>
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## Features
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+- Login and register using AWS Cognito
+- Change user name and photo
+- Add/Remove friends
+- Chat with friends by using:
+    - Plain text
+    - Media files
+    - Code snipets
+- Create chat rooms
+- Manage chat rooms
+- Comunicate with other users through an audio video channel
+    - Connection is done peer to peer by using WebRTC protocol
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## Technologies
 
-## Customize configuration
+- Vue 3 - Composition API
+- TypeScript
+- Pinia
+- Vue Router
+- Tailwind + DaisyUI
+- AWS Services: Cognito, S3, Amplify
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## Build process
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- `npm install` (to install dependencies)
+- `npm run dev` (to run the app)
+- `npm build` (for production)
