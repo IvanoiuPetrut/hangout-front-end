@@ -6,7 +6,7 @@
 
 Hangout is web app that allows you to communicate with other persons, either thorough a direct message chat or by using an audio video channel, leveraging peer to peer connection. It also supports messages with media conent, markdown and code.
 
-<a href="ttps://github.com/IvanoiuPetrut/hangout-backend">Back-end repository</a>
+<a href="https://github.com/IvanoiuPetrut/hangout-backend">Back-end repository</a>
 
 <a href="https://www.youtube.com/watch?v=HNb0TTiL960">Hangout Demo</a>
 
