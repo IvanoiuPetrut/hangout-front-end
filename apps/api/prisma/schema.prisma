@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String @id
+
+  username String @unique
+
+  photo String? @default("https://www.gravatar.com/avatar/3b3be63a4c2asdas01asdasda02?d=identicon")
+
+  friends Friends[]
+
+  chatRooms ChatRoom[] @relation("MembersRelation")
+
+  ownedRooms ChatRoom[] @relation("OwnerRelation")
+}
+
+model FriendRequests {
+  from String
+
+  to String
+
+  status String @default("pending")
+
+  createdAt DateTime @default(now())
+
+  @@id([from, to])
+}
+
+model ChatRoomInvites {
+  id String @id @default(uuid())
+
+  chatRoomId String
+
+  toUserId String
+
+  status String @default("pending")
+
+  createdAt DateTime @default(now())
+}
+
+model Friends {
+  id String @id @default(uuid())
+
+  friendId String
+
+  createdAt DateTime @default(now())
+
+  User User? @relation(fields: [userId], references: [id])
+
+  userId String?
+
+  @@unique([userId, friendId])
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderName String   @default("Anonymous")
+  senderId   String
+  receiverId String?
+  chatRoomId String?
+  senderPhoto String
+  content    String
+  createdAt  DateTime @default(now())
+
+  ChatRoom   ChatRoom? @relation(fields: [chatRoomId], references: [id])
+}
+
+model ChatRoom {
+  id       String   @id @default(uuid())
+  name     String   @unique
+  description String @default("No description")
+  ownerId  String? 
+  owner    User?     @relation(name: "OwnerRelation", fields: [ownerId], references: [id])
+  members  User[]   @relation(name: "MembersRelation")
+
+  messages Message[]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
