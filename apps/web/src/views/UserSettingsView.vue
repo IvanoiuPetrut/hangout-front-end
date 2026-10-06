@@ -5,6 +5,7 @@ import { updateUserDetails, updateUserPicture } from "@/services/user/userIntera
 import { useAsyncRequest } from "@/helpers/asyncRequest";
 
 import BaseAlert from "@/components/alert/BaseAlert.vue";
+import { getErrorMessage } from "@/helpers/auth";
 
 const userName = ref("");
 const password = ref("");
@@ -87,6 +88,7 @@ async function handleSavePhoto() {
       }, 3500);
     } catch (error) {
       console.error("Error saving photo", error);
+      alert(getErrorMessage(error, "Could not save the photo"));
     }
   }
 }

@@ -23,7 +23,7 @@ function formatDate(isoString: string): string {
 }
 
 function isFileFromServer(message: string): boolean {
-  return message.startsWith("https://images-hangout-app.s3.eu-central-1.amazonaws.com/");
+  return message.startsWith("/uploads/");
 }
 
 function isPhoto(message: string): boolean {

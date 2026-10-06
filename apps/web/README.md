@@ -17,7 +17,7 @@ Hangout is web app that allows you to communicate with other persons, either tho
 
 ## Features
 
-- Login and register using AWS Cognito
+- Login and register with username and password
 - Change user name and photo
 - Add/Remove friends
 - Chat with friends by using:
@@ -36,10 +36,10 @@ Hangout is web app that allows you to communicate with other persons, either tho
 - Pinia
 - Vue Router
 - Tailwind + DaisyUI
-- AWS Services: Cognito, S3, Amplify
 
 ## Build process
 
-- `npm install` (to install dependencies)
-- `npm run dev` (to run the app)
-- `npm build` (for production)
+See the [root README](../../README.md) for setup. From the repository root:
+
+- `npm run dev:web` (to run the app)
+- `npm run build -w apps/web` (for production)

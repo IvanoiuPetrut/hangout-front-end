@@ -1,10 +1,26 @@
-import { CognitoJwtVerifier } from "aws-jwt-verify";
+import jwt from "jsonwebtoken";
 
-const verifier = CognitoJwtVerifier.create({
-  userPoolId: process.env.COGNITO_USER_POOL_ID,
-  tokenUse: "access",
-  clientId: process.env.COGNITO_CLIENT_ID,
-});
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) {
+  throw new Error("JWT_SECRET environment variable is not set");
+}
+
+const ACCESS_TOKEN_EXPIRES_IN = "7d";
+
+function signAccessToken(userId: string): string {
+  return jwt.sign({}, jwtSecret, {
+    subject: userId,
+    expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+  });
+}
+
+function verifyAccessToken(token: string): string {
+  const payload = jwt.verify(token, jwtSecret);
+  if (typeof payload === "string" || !payload.sub) {
+    throw new Error("Invalid token payload");
+  }
+  return payload.sub;
+}
 
 async function verifyTokens(req, res, next) {
   const accessToken = req.headers["access-token"];
@@ -14,7 +30,7 @@ async function verifyTokens(req, res, next) {
   }
 
   try {
-    const payload = await verifier.verify(accessToken);
+    verifyAccessToken(accessToken);
     next();
   } catch (err) {
     console.log(err);
@@ -24,7 +40,7 @@ async function verifyTokens(req, res, next) {
 
 async function verifyTokenSocket(token) {
   try {
-    await verifier.verify(token);
+    verifyAccessToken(token);
     return true;
   } catch (err) {
     return false;
@@ -33,11 +49,10 @@ async function verifyTokenSocket(token) {
 
 async function getUserId(accessToken) {
   try {
-    const payload = await verifier.verify(accessToken);
-    return payload.sub;
+    return verifyAccessToken(accessToken);
   } catch (err) {
     return null;
   }
 }
 
-export { verifyTokens, getUserId, verifyTokenSocket };
+export { verifyTokens, getUserId, verifyTokenSocket, signAccessToken };

@@ -26,6 +26,7 @@ import {
 } from "../persistance/userPersistence.js";
 
 import { getUserId } from "../middleware/verifyUser.js";
+import { UploadQuotaError } from "../storage/fileStorage.js";
 
 async function createUser(req: Request, res: Response): Promise<void> {
   const { id, username } = req.body;
@@ -134,6 +135,9 @@ async function createProfilePicture(req: Request, res: Response): Promise<any> {
     );
     res.json(user);
   } catch (error) {
+    if (error instanceof UploadQuotaError) {
+      return res.status(507).json({ error: error.message });
+    }
     res.status(400).json({ error: error.message });
   }
 }

@@ -9,6 +9,13 @@ Table User {
   friends Friends [not null]
   chatRooms ChatRoom [not null]
   ownedRooms ChatRoom [not null]
+  credential UserCredential
+}
+
+Table UserCredential {
+  userId String [pk]
+  passwordHash String [not null]
+  user User [not null]
 }
 
 Table FriendRequests {
@@ -68,6 +75,8 @@ Table MembersRelation {
   chatroomsId String [ref: > ChatRoom.id]
   membersId String [ref: > User.id]
 }
+
+Ref: UserCredential.userId - User.id [delete: Cascade]
 
 Ref: Friends.userId > User.id
 

@@ -1,10 +1,13 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
+import multer from "multer";
+import { authRouter } from "./routes/authRoute.js";
 import { userRouter } from "./routes/userRoute.js";
 import { friendRouter } from "./routes/friendRoute.js";
 import { messagesRouter } from "./routes/messagesRoute.js";
 import { chatRoomRouter } from "./routes/chatRoomRoute.js";
+import { UPLOADS_DIR } from "./storage/fileStorage.js";
 import {
   getUserId,
   verifyTokens,
@@ -44,17 +47,38 @@ const port = process.env.PORT || 3000;
 
 // app.use(cors(corsOptions));
 
-//console log COGNITO_CLIENT_ID,COGNITO_USER_POOL_ID from env
-console.log("client id: ", process.env.COGNITO_CLIENT_ID);
-console.log("user pool id: ", process.env.COGNITO_USER_POOL_ID);
-
 app.use(cors());
 app.use(express.json());
+app.use("/auth", authRouter);
+// Public so <img>/<video> tags can load them; file names are random UUIDs
+app.use(
+  "/uploads",
+  express.static(UPLOADS_DIR, {
+    setHeaders: (res) => {
+      // Uploads are served from the app's own origin, so never let an
+      // uploaded HTML/SVG file run scripts there
+      res.setHeader(
+        "Content-Security-Policy",
+        "sandbox; default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'"
+      );
+      res.setHeader("X-Content-Type-Options", "nosniff");
+    },
+  })
+);
 app.use(verifyTokens);
 app.use("/user", userRouter);
 app.use("/friend", friendRouter);
 app.use("/messages", messagesRouter);
 app.use("/chat-room", chatRoomRouter);
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+    return res
+      .status(413)
+      .json({ error: "File is too large. Maximum size is 10MB." });
+  }
+  next(err);
+});
 
 // const server = http.createServer(app);
 const server = http.createServer(app);

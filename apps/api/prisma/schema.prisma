@@ -17,6 +17,16 @@ model User {
   chatRooms ChatRoom[] @relation("MembersRelation")
 
   ownedRooms ChatRoom[] @relation("OwnerRelation")
+
+  credential UserCredential?
+}
+
+model UserCredential {
+  userId String @id
+
+  passwordHash String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model FriendRequests {

@@ -17,7 +17,7 @@ Hangout is web app that allows you to communicate with other persons, either tho
 
 ## Features
 
-- Login and register using AWS Cognito
+- Login and register with username and password
 - Change user name and photo
 - Add/Remove friends
 - Chat with friends by using:
@@ -36,12 +36,11 @@ Hangout is web app that allows you to communicate with other persons, either tho
 - WebRTC
 - TypeScript
 - Prisma
-- AWS SDKs: Cognito, S3
 - Molter
 
 ## Build process
 
-- `npm install` (to install dependencies)
-- `npm run dev` (to run the app)
-- `npm run build` (for production)
-- `npm run buildw` (build code to JavaScript from TypeScript on code change)
+See the [root README](../../README.md) for setup. From the repository root:
+
+- `npm run dev:api` (to run the app with rebuild on change)
+- `npm run build -w apps/api` (for production)

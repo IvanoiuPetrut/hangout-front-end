@@ -20,11 +20,4 @@ async function uploadFile(file: File): Promise<uploadFileReturn> {
   return response.data;
 }
 
-async function summarizeMessages(messages: Array<{ name: string; content: string }>): Promise<any> {
-  const response = await backendInstanceForInteractor.post("/messages/summarize", {
-    messages
-  });
-  return response.data.summary;
-}
-
-export { getMessagesFromFriendRoom, uploadFile, summarizeMessages };
+export { getMessagesFromFriendRoom, uploadFile };

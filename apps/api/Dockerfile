@@ -1,6 +1,9 @@
 # Build context is the monorepo root: docker build -f apps/api/Dockerfile .
 FROM node:18-alpine
 
+# Prisma's engines need OpenSSL, which the alpine base image doesn't ship
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # Install only the api workspace's dependencies using the root lockfile
@@ -18,4 +21,5 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+# Apply pending database migrations, then start the server
+CMD ["sh", "-c", "npx prisma migrate deploy && exec node dist/index.js"]

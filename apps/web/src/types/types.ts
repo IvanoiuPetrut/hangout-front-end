@@ -25,13 +25,6 @@ export type FriendRequest = {
   createdAt: string;
 };
 
-export type AccessTokens = {
-  accessToken: string;
-  idToken: string;
-  refreshToken: string;
-  expiresIn: number;
-};
-
 export type UserDetails = {
   username: string;
   photo: string;

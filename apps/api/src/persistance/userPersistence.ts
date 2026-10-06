@@ -1,13 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-
-const s3Client = new S3Client({
-  region: "eu-central-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+import { saveFile, deleteFile } from "../storage/fileStorage.js";
 
 const prisma = new PrismaClient();
 
@@ -115,22 +107,17 @@ async function getUsersPersistence({ name, id }) {
 }
 
 async function updateUserProfilePicturePersistence({ userId, file }) {
-  const command = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: userId + "." + file.mimetype.split("/")[1],
-    Body: file.buffer,
-    ContentType: file.mimetype,
+  const previous = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: { photo: true },
   });
 
-  try {
-    await s3Client.send(command);
-  } catch (error) {
-    console.log(error);
-  }
-
-  const fileName = `https://${
-    process.env.AWS_BUCKET_NAME
-  }.s3.amazonaws.com/${userId}.${file.mimetype.split("/")[1]}`;
+  const fileName = await saveFile({
+    buffer: file.buffer,
+    originalName: file.originalname,
+  });
 
   const user = await prisma.user.update({
     where: {
@@ -149,6 +136,8 @@ async function updateUserProfilePicturePersistence({ userId, file }) {
       senderPhoto: fileName,
     },
   });
+
+  await deleteFile(previous?.photo);
 
   return user;
 }

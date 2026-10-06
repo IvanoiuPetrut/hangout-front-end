@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import BaseAvatar from "@components/navigation/data_display/BaseAvatar.vue";
 import JoinedRooms from "@components/navigation/data_display/JoinedRooms.vue";
-import { deleteCookie } from "@/helpers/cookie";
+import { logout } from "@/helpers/auth";
 import { useUserStore } from "@/stores/user";
 
 const emit = defineEmits<{
   (e: "toggleMenuVisibility"): void;
 }>();
-
-const logoutUrl = import.meta.env.VITE_COGNITO_LOGOUT_URL as string;
 
 function handleToggleMenuVisibility(): void {
   const smallScreenWidth = 640;
@@ -20,12 +18,7 @@ function handleToggleMenuVisibility(): void {
 
 function handleLogout(): void {
   useUserStore().logout();
-  deleteCookie("access_token");
-  deleteCookie("expires_in");
-  deleteCookie("refresh_token");
-  setTimeout(() => {
-    window.location.href = logoutUrl;
-  }, 200);
+  logout();
 }
 </script>
 

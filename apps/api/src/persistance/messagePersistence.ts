@@ -1,15 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from "uuid";
+import { saveFile } from "../storage/fileStorage.js";
 
 const prisma = new PrismaClient();
-const s3Client = new S3Client({
-  region: "eu-central-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
 
 async function createMessagePersistence({
   senderId,
@@ -79,23 +71,7 @@ async function getMessagesFromChatRoomPersistence({ chatRoomId, userId }) {
 }
 
 async function uploadFilePersistence({ file }) {
-  const uuid = uuidv4();
-  const command = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: uuid + file.originalname,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  });
-
-  try {
-    const response = await s3Client.send(command);
-    const itemUrl = `https://${
-      process.env.AWS_BUCKET_NAME
-    }.s3.eu-central-1.amazonaws.com/${uuid + file.originalname}`;
-    return itemUrl;
-  } catch (error) {
-    console.log("error", error);
-  }
+  return saveFile({ buffer: file.buffer, originalName: file.originalname });
 }
 
 export {
