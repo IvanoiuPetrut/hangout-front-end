@@ -13,7 +13,7 @@ function calculateManagingRoomsPercentage(): number {
   if (isNaN(percentage)) {
     return 0;
   }
-  return percentage;
+  return Math.round(percentage);
 }
 
 onMounted(() => {
@@ -22,56 +22,80 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="stats grid-rows-3 md:grid-rows-1 shadow-xl bg-base-200">
-    <div class="stat">
-      <div class="stat-figure text-primary">
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="surface flex items-center justify-between p-5">
+      <div>
+        <p class="text-sm text-base-content/60">Friends</p>
+        <p class="mt-1 text-3xl font-bold tracking-tight">{{ friends?.length ?? 0 }}</p>
+      </div>
+      <span class="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
+          fill="none"
           viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-6 h-6"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-6 w-6"
         >
           <path
-            fill-rule="evenodd"
-            d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-            clip-rule="evenodd"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
           />
         </svg>
-      </div>
-      <div class="stat-title">Total Friends</div>
-      <div class="stat-value text-primary">{{ friends?.length }}</div>
+      </span>
     </div>
 
-    <div class="stat">
-      <div class="stat-figure text-secondary">
+    <div class="surface flex items-center justify-between p-5">
+      <div>
+        <p class="text-sm text-base-content/60">Rooms joined</p>
+        <p class="mt-1 text-3xl font-bold tracking-tight">
+          {{ useJoinedRoomsStore().joinedRooms.length }}
+        </p>
+      </div>
+      <span class="grid h-11 w-11 place-items-center rounded-xl bg-secondary/10 text-secondary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
+          fill="none"
           viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-6 h-6"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-6 w-6"
         >
           <path
-            d="M2.273 5.625A4.483 4.483 0 0 1 5.25 4.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0 0 18.75 3H5.25a3 3 0 0 0-2.977 2.625ZM2.273 8.625A4.483 4.483 0 0 1 5.25 7.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0 0 18.75 6H5.25a3 3 0 0 0-2.977 2.625ZM5.25 9a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h13.5a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3H15a.75.75 0 0 0-.75.75 2.25 2.25 0 0 1-4.5 0A.75.75 0 0 0 9 9H5.25Z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122"
           />
         </svg>
-      </div>
-      <div class="stat-title">Total rooms joined</div>
-      <div class="stat-value text-secondary">{{ useJoinedRoomsStore().joinedRooms.length }}</div>
+      </span>
     </div>
 
-    <div class="stat">
-      <div class="stat-figure text-secondary">
-        <div class="avatar online">
-          <div class="w-16 rounded-full">
-            <img :src="useUserStore().photo" />
+    <div class="surface flex items-center justify-between gap-4 p-5">
+      <div class="min-w-0">
+        <p class="text-sm text-base-content/60">Managing rooms</p>
+        <p class="mt-1 text-3xl font-bold tracking-tight">
+          {{ calculateManagingRoomsPercentage() }}%
+        </p>
+        <p class="text-xs text-base-content/50">
+          {{ useJoinedRoomsStore().managingRoomsCount() }} of
+          {{ useJoinedRoomsStore().joinedRooms.length }} rooms
+        </p>
+      </div>
+      <div
+        class="radial-progress shrink-0 text-accent"
+        :style="{
+          '--value': calculateManagingRoomsPercentage(),
+          '--size': '3.25rem',
+          '--thickness': '4px'
+        }"
+        role="progressbar"
+      >
+        <div class="avatar">
+          <div class="w-9 rounded-full bg-base-300">
+            <img v-if="useUserStore().photo" :src="useUserStore().photo" alt="" />
           </div>
         </div>
-      </div>
-      <div class="stat-value">{{ calculateManagingRoomsPercentage() }}%</div>
-      <div class="stat-title">Managing rooms</div>
-      <div class="stat-desc text-secondary">
-        {{ useJoinedRoomsStore().managingRoomsCount() }} out of
-        {{ useJoinedRoomsStore().joinedRooms.length }}
       </div>
     </div>
   </div>

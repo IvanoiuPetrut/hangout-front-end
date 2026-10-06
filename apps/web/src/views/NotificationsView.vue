@@ -4,16 +4,17 @@ import AcceptRoomInviteList from "@/components/friends/AcceptRoomInviteList.vue"
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 p-4">
-    <div class="border-b-2 border-neutral pb-4">
+  <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-10 sm:px-6">
+    <header class="animate-fade-up">
+      <p class="section-title mb-2">Inbox</p>
+      <h1 class="text-3xl font-extrabold tracking-tight">Notifications</h1>
+      <p class="mt-1 text-base-content/60">Requests and invites waiting for your answer.</p>
+    </header>
+    <section class="surface animate-fade-up p-5 [animation-delay:60ms]">
       <AcceptFriendRequestList />
-    </div>
-    <div class="border-b-2 border-neutral pb-4">
-      <h3 class="font-bold text-xl mb-2">Messages - 0</h3>
-      <p class="opacity-70">No messages</p>
-    </div>
-    <div class="border-b-2 border-neutral pb-4">
+    </section>
+    <section class="surface animate-fade-up p-5 [animation-delay:120ms]">
       <AcceptRoomInviteList />
-    </div>
+    </section>
   </div>
 </template>

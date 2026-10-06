@@ -65,34 +65,43 @@ onMounted(async () => {
 </script>
 
 <template>
-  <BaseHeaderChatRoom v-if="chatRoomDetails" :roomName="chatRoomDetails.name" />
-  <div class="flex w-full">
-    <QuickActionMenu
-      @select-room-content="handleSelectRoomContent"
-      :active-content="selectedRoomContent"
+  <div class="flex h-[calc(100vh-4rem)] flex-col">
+    <BaseHeaderChatRoom
+      v-if="chatRoomDetails"
+      :roomName="chatRoomDetails.name"
+      :member-count="chatRoomDetails.members.length"
     />
-    <div v-if="chatRoomDetails" class="flex-1 p-4">
-      <RoomMembers
-        v-show="selectedRoomContent === RoomContent.Members"
-        :members="chatRoomDetails.members"
-        :owner-id="chatRoomDetails.owner.id"
-        :room-id="props.roomId"
-        @user-kicked="handleUserKicked"
+    <div class="flex min-h-0 flex-1">
+      <QuickActionMenu
+        @select-room-content="handleSelectRoomContent"
+        :active-content="selectedRoomContent"
       />
-      <RoomChat
-        v-show="selectedRoomContent === RoomContent.Chat"
-        :messages="chatRoomDetails.messages"
-        :room-id="props.roomId"
-      />
-      <RoomSettings
-        v-show="selectedRoomContent === RoomContent.Settings"
-        :room-id="props.roomId"
-        :room-name="chatRoomDetails.name"
-        :room-description="chatRoomDetails.description"
-        :owner-id="chatRoomDetails.owner.id"
-        @update-room-name="handleUpdateRoomName"
-      />
-      <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" :room-id="props.roomId" />
+      <div v-if="chatRoomDetails" class="min-h-0 min-w-0 flex-1">
+        <RoomMembers
+          v-show="selectedRoomContent === RoomContent.Members"
+          :members="chatRoomDetails.members"
+          :owner-id="chatRoomDetails.owner.id"
+          :room-id="props.roomId"
+          @user-kicked="handleUserKicked"
+        />
+        <RoomChat
+          v-show="selectedRoomContent === RoomContent.Chat"
+          :messages="chatRoomDetails.messages"
+          :room-id="props.roomId"
+        />
+        <RoomSettings
+          v-show="selectedRoomContent === RoomContent.Settings"
+          :room-id="props.roomId"
+          :room-name="chatRoomDetails.name"
+          :room-description="chatRoomDetails.description"
+          :owner-id="chatRoomDetails.owner.id"
+          @update-room-name="handleUpdateRoomName"
+        />
+        <RoomVoice v-show="selectedRoomContent === RoomContent.Voice" :room-id="props.roomId" />
+      </div>
+      <div v-else class="flex flex-1 items-center justify-center">
+        <span class="loading loading-dots loading-lg text-base-content/30"></span>
+      </div>
     </div>
   </div>
 </template>

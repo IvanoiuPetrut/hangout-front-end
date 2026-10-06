@@ -12,18 +12,24 @@ const emit = defineEmits<{
 
 <template>
   <div
-    class="flex flex-col gap-6 items-center py-2 w-12 md:w-16 border-r-2 border-neutral h-[calc(100vh-7.3rem)]"
+    class="flex w-14 shrink-0 flex-col items-center gap-2 border-r border-base-content/[0.06] bg-base-200/40 py-3 md:w-16"
   >
     <button
       @click="emit('selectRoomContent', RoomContent.Chat)"
-      class="btn btn-sm md:btn-md btn-circle btn-outline"
-      :class="{ 'btn-primary': activeContent === RoomContent.Chat }"
+      class="tooltip tooltip-right btn btn-ghost btn-square relative z-20"
+      :class="
+        activeContent === RoomContent.Chat
+          ? 'bg-primary/15 text-primary hover:bg-primary/20'
+          : 'text-base-content/60 hover:text-base-content'
+      "
+      data-tip="Chat"
+      aria-label="Chat"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
-        class="w-4 h-4 md:w-6 md:h-6"
+        class="h-5 w-5"
       >
         <path
           fill-rule="evenodd"
@@ -35,14 +41,20 @@ const emit = defineEmits<{
 
     <button
       @click="emit('selectRoomContent', RoomContent.Voice)"
-      class="btn btn-sm md:btn-md btn-circle btn-outline"
-      :class="{ 'btn-primary': activeContent === RoomContent.Voice }"
+      class="tooltip tooltip-right btn btn-ghost btn-square relative z-20"
+      :class="
+        activeContent === RoomContent.Voice
+          ? 'bg-primary/15 text-primary hover:bg-primary/20'
+          : 'text-base-content/60 hover:text-base-content'
+      "
+      data-tip="Voice & video"
+      aria-label="Voice & video"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"
-        class="w-4 h-4 md:w-6 md:h-6"
+        class="h-5 w-5"
       >
         <path
           d="M10.5 3.75a.75.75 0 0 0-1.264-.546L5.203 7H2.667a.75.75 0 0 0-.7.48A6.985 6.985 0 0 0 1.5 10c0 .887.165 1.737.468 2.52.111.29.39.48.7.48h2.535l4.033 3.796a.75.75 0 0 0 1.264-.546V3.75ZM16.45 5.05a.75.75 0 0 0-1.06 1.061 5.5 5.5 0 0 1 0 7.778.75.75 0 0 0 1.06 1.06 7 7 0 0 0 0-9.899Z"
@@ -55,14 +67,20 @@ const emit = defineEmits<{
 
     <button
       @click="emit('selectRoomContent', RoomContent.Members)"
-      class="btn btn-sm md:btn-md btn-circle btn-outline"
-      :class="{ 'btn-primary': activeContent === RoomContent.Members }"
+      class="tooltip tooltip-right btn btn-ghost btn-square relative z-20"
+      :class="
+        activeContent === RoomContent.Members
+          ? 'bg-primary/15 text-primary hover:bg-primary/20'
+          : 'text-base-content/60 hover:text-base-content'
+      "
+      data-tip="Members"
+      aria-label="Members"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
-        class="w-4 h-4 md:w-6 md:h-6"
+        class="h-5 w-5"
       >
         <path
           d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z"
@@ -71,14 +89,20 @@ const emit = defineEmits<{
     </button>
     <button
       @click="emit('selectRoomContent', RoomContent.Settings)"
-      class="btn btn-sm md:btn-md btn-circle btn-outline"
-      :class="{ 'btn-primary': activeContent === RoomContent.Settings }"
+      class="tooltip tooltip-right btn btn-ghost btn-square relative z-20"
+      :class="
+        activeContent === RoomContent.Settings
+          ? 'bg-primary/15 text-primary hover:bg-primary/20'
+          : 'text-base-content/60 hover:text-base-content'
+      "
+      data-tip="Settings"
+      aria-label="Settings"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
-        class="w-4 h-4 md:w-6 md:h-6"
+        class="h-5 w-5"
       >
         <path
           fill-rule="evenodd"

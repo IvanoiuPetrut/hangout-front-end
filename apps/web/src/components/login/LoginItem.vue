@@ -25,38 +25,47 @@ async function handleLogin(): Promise<void> {
 </script>
 
 <template>
-  <form @submit.prevent="handleLogin">
-    <div class="form-control mb-4">
-      <label class="label" for="username"><span class="label-text">Username</span></label>
+  <form class="flex flex-col gap-4" @submit.prevent="handleLogin">
+    <div class="form-control">
+      <label class="label pt-0" for="username"
+        ><span class="label-text font-medium">Username</span></label
+      >
       <input
         v-model="username"
         type="text"
         placeholder="Username"
-        class="input input-bordered input-primary"
+        class="input input-bordered w-full bg-base-200/60 transition-colors focus:border-primary focus:bg-base-100"
         autocomplete="username"
         required
         id="username"
       />
     </div>
     <div class="form-control">
-      <label class="label" for="password"><span class="label-text">Password</span></label>
+      <label class="label pt-0" for="password"
+        ><span class="label-text font-medium">Password</span></label
+      >
       <input
         v-model="password"
         type="password"
         placeholder="Password"
-        class="input input-bordered input-primary"
+        class="input input-bordered w-full bg-base-200/60 transition-colors focus:border-primary focus:bg-base-100"
         autocomplete="current-password"
         required
         id="password"
       />
     </div>
-    <p v-if="error" class="text-error text-sm mt-4">{{ error }}</p>
-    <div class="form-control mt-6">
-      <button type="submit" class="btn btn-primary" :disabled="loading">Login</button>
+    <div v-if="error" role="alert" class="alert alert-error animate-pop-in py-2 text-sm">
+      <span>{{ error }}</span>
     </div>
-    <RouterLink :to="{ name: 'register' }" class="block mt-4">
-      <span class="label-text-alt link link-hover text-sm"
-        >Need account? <strong>Register</strong></span
+    <div class="form-control mt-2">
+      <button type="submit" class="btn btn-primary shadow-lg shadow-primary/25" :disabled="loading">
+        <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+        Log in
+      </button>
+    </div>
+    <RouterLink :to="{ name: 'register' }" class="block text-center">
+      <span class="text-sm text-base-content/60 hover:text-base-content"
+        >Don't have an account? <strong class="text-primary">Register</strong></span
       >
     </RouterLink>
   </form>

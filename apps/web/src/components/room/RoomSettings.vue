@@ -94,137 +94,140 @@ async function handleLeaveChatRoom() {
 </script>
 
 <template>
-  <div>
+  <div class="h-full overflow-y-auto">
     <BaseAlert v-if="updateError" class="alert-error">
       {{ updateError }}
     </BaseAlert>
-    <div class="mb-2 flex items-center gap-4">
-      <h1 v-if="!isNameEdit" class="text-2xl font-bold">{{ roomName }}</h1>
-      <div v-else>
-        <input v-model="newName" class="input input-bordered w-full max-w-xs" />
-      </div>
-      <button
-        v-if="useUserStore().userId === props.ownerId && !isNameEdit"
-        @click="isNameEdit = !isNameEdit"
-        class="btn btn-circle btn-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4"
-        >
-          <path
-            d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z"
-          />
-        </svg>
-      </button>
-      <div v-else-if="useUserStore().userId === props.ownerId">
-        <div class="flex gap-2">
-          <button @click="handleAcceptNewName" class="btn btn-circle btn-xs btn-success">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-6"
+    <div class="mx-auto flex max-w-3xl flex-col gap-6 p-4 sm:p-6">
+      <h2 class="text-lg font-semibold">Room settings</h2>
+
+      <section class="surface divide-y divide-base-content/[0.06]">
+        <div class="flex flex-col gap-2 p-5">
+          <p class="section-title">Room name</p>
+          <div class="flex items-center gap-3">
+            <h1 v-if="!isNameEdit" class="flex-1 text-2xl font-bold tracking-tight">
+              {{ roomName }}
+            </h1>
+            <input
+              v-else
+              v-model="newName"
+              class="input input-bordered flex-1 focus:border-primary"
+              @keyup.enter="handleAcceptNewName"
+            />
+            <button
+              v-if="useUserStore().userId === props.ownerId && !isNameEdit"
+              @click="isNameEdit = !isNameEdit"
+              class="btn btn-ghost btn-sm gap-2"
             >
-              <path
-                fill-rule="evenodd"
-                d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-          <button @click="handleCancelNewName" class="btn btn-circle btn-xs btn-error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-6"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.75"
+                stroke="currentColor"
+                class="h-4 w-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </svg>
+              Edit
+            </button>
+            <div v-else-if="useUserStore().userId === props.ownerId" class="flex gap-2">
+              <button @click="handleCancelNewName" class="btn btn-ghost btn-sm">Cancel</button>
+              <button @click="handleAcceptNewName" class="btn btn-primary btn-sm">Save</button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="mb-6 flex gap-4">
-      <p v-if="!isDescriptionEdit" class="text-base opacity-70 max-w-screen-sm">
-        {{ roomDescription }}
-      </p>
-      <div v-else class="w-48 lg:w-96">
-        <textarea
-          v-model="newDescription"
-          class="textarea textarea-bordered w-full text-xs md:text-md lg:text-lg h-32 lg:h-64"
-        ></textarea>
-      </div>
-      <button
-        v-if="useUserStore().userId === props.ownerId && !isDescriptionEdit"
-        @click="isDescriptionEdit = !isDescriptionEdit"
-        class="btn btn-circle btn-sm"
+
+        <div class="flex flex-col gap-2 p-5">
+          <p class="section-title">Description</p>
+          <div class="flex items-start gap-3">
+            <p
+              v-if="!isDescriptionEdit"
+              class="flex-1 whitespace-pre-line text-base-content/70"
+              :class="{ 'italic text-base-content/40': !roomDescription }"
+            >
+              {{ roomDescription || "No description yet." }}
+            </p>
+            <textarea
+              v-else
+              v-model="newDescription"
+              class="textarea textarea-bordered h-32 flex-1 text-base focus:border-primary"
+            ></textarea>
+            <button
+              v-if="useUserStore().userId === props.ownerId && !isDescriptionEdit"
+              @click="isDescriptionEdit = !isDescriptionEdit"
+              class="btn btn-ghost btn-sm gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.75"
+                stroke="currentColor"
+                class="h-4 w-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </svg>
+              Edit
+            </button>
+            <div v-else-if="useUserStore().userId === props.ownerId" class="flex gap-2">
+              <button @click="handleCancelNewDescription" class="btn btn-ghost btn-sm">
+                Cancel
+              </button>
+              <button @click="handleAcceptNewDescription" class="btn btn-primary btn-sm">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="flex flex-col gap-4 rounded-box border border-error/25 bg-error/5 p-5 sm:flex-row sm:items-center sm:justify-between"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4"
+        <div v-if="useUserStore().userId === props.ownerId">
+          <h3 class="font-semibold text-error">Delete this room</h3>
+          <p class="text-sm text-base-content/60">
+            All messages and members will be removed. This can't be undone.
+          </p>
+        </div>
+        <div v-else>
+          <h3 class="font-semibold text-error">Leave this room</h3>
+          <p class="text-sm text-base-content/60">You'll need a new invite to come back.</p>
+        </div>
+        <button
+          v-if="useUserStore().userId === props.ownerId"
+          class="btn btn-error btn-sm shrink-0"
+          onclick="modal_delete_server.showModal()"
         >
-          <path
-            d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z"
-          />
-        </svg>
-      </button>
-      <div v-else-if="useUserStore().userId === props.ownerId" class="flex gap-2">
-        <button @click="handleAcceptNewDescription" class="btn btn-circle btn-xs btn-success">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="size-6"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z"
-              clip-rule="evenodd"
-            />
-          </svg>
+          Delete room
         </button>
-        <button @click="handleCancelNewDescription" class="btn btn-circle btn-xs btn-error">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="size-6"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-              clip-rule="evenodd"
-            />
-          </svg>
+        <button
+          v-if="useUserStore().userId !== props.ownerId"
+          class="btn btn-error btn-outline btn-sm shrink-0"
+          onclick="modal_leave_server.showModal()"
+        >
+          Leave room
         </button>
-      </div>
+      </section>
     </div>
 
-    <button
-      v-if="useUserStore().userId === props.ownerId"
-      class="btn btn-error btn-sm"
-      onclick="modal_delete_server.showModal()"
-    >
-      Delete server
-    </button>
     <dialog id="modal_delete_server" class="modal">
       <div class="modal-box">
-        <h3 class="text-lg font-bold flex gap-4 items-center">
+        <h3 class="flex items-center gap-3 text-lg font-bold">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="w-6 h-6"
+            class="h-6 w-6 text-error"
           >
             <path
               fill-rule="evenodd"
@@ -232,35 +235,29 @@ async function handleLeaveChatRoom() {
               clip-rule="evenodd"
             />
           </svg>
-          Confirm delete
+          Delete room?
         </h3>
-        <p class="py-4">
+        <p class="py-4 text-base-content/70">
           Do you really want to delete the chat room? This process cannot be undone.
         </p>
         <div class="modal-action">
-          <form method="dialog" class="flex gap-4">
-            <button @click="handleDeleteChatRoom" class="btn btn-sm btn-error">Delete</button>
-            <button class="btn btn-sm">Close</button>
+          <form method="dialog" class="flex flex-row-reverse gap-2">
+            <button @click="handleDeleteChatRoom" class="btn btn-error btn-sm">Delete</button>
+            <button class="btn btn-ghost btn-sm">Cancel</button>
           </form>
         </div>
       </div>
+      <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
 
-    <button
-      v-if="useUserStore().userId !== props.ownerId"
-      class="btn btn-sm"
-      onclick="modal_leave_server.showModal()"
-    >
-      Leave server
-    </button>
     <dialog id="modal_leave_server" class="modal">
       <div class="modal-box">
-        <h3 class="text-lg font-bold flex gap-4 items-center">
+        <h3 class="flex items-center gap-3 text-lg font-bold">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="w-6 h-6"
+            class="h-6 w-6 text-error"
           >
             <path
               fill-rule="evenodd"
@@ -268,16 +265,17 @@ async function handleLeaveChatRoom() {
               clip-rule="evenodd"
             />
           </svg>
-          Confirm leave
+          Leave room?
         </h3>
-        <p class="py-4">Do you really want to leave the chat room?</p>
+        <p class="py-4 text-base-content/70">Do you really want to leave the chat room?</p>
         <div class="modal-action">
-          <form method="dialog" class="flex gap-4">
-            <button @click="handleLeaveChatRoom" class="btn btn-sm btn-error">Leave</button>
-            <button class="btn btn-sm">Close</button>
+          <form method="dialog" class="flex flex-row-reverse gap-2">
+            <button @click="handleLeaveChatRoom" class="btn btn-error btn-sm">Leave</button>
+            <button class="btn btn-ghost btn-sm">Cancel</button>
           </form>
         </div>
       </div>
+      <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
   </div>
 </template>

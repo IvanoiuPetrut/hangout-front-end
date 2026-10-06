@@ -297,11 +297,49 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="!isUserInVoiceChannel" class="w-full h-full flex items-center justify-center">
-    <button @click="joinVoiceChannel" class="btn btn-wide btn-primary">Join voice channel</button>
+  <div v-if="!isUserInVoiceChannel" class="flex h-full w-full items-center justify-center p-4">
+    <div
+      class="surface flex w-full max-w-sm animate-fade-up flex-col items-center gap-5 p-8 text-center"
+    >
+      <div class="relative">
+        <span class="absolute inset-0 animate-ping rounded-full bg-primary/20"></span>
+        <span
+          class="relative grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-primary-content shadow-lg shadow-primary/30"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.75"
+            stroke="currentColor"
+            class="h-7 w-7"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold">Voice & video</h3>
+        <p class="mt-1 text-sm text-base-content/60">
+          Jump in to talk face to face with whoever's around.
+        </p>
+      </div>
+      <button
+        @click="joinVoiceChannel"
+        class="btn btn-primary btn-wide shadow-lg shadow-primary/25"
+      >
+        Join call
+      </button>
+    </div>
   </div>
-  <div v-else class="w-full h-full flex flex-col max-w-3xl mx-auto pt-2">
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 place-items-center">
+  <div v-else class="flex h-full w-full flex-col gap-4 p-4">
+    <div
+      class="mx-auto grid w-full max-w-5xl flex-1 auto-rows-min content-center gap-4 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3"
+    >
       <LocalStream :local-stream="localStream" />
       <RemoteStream
         v-for="user in connectedUsers"
@@ -312,13 +350,11 @@ onUnmounted(() => {
       />
     </div>
 
-    <div class="mt-auto">
-      <RoomVoiceActions
-        @toggleAudio="handleToggleAudio"
-        @toggleCamera="handleToggleCamera"
-        @toggleMic="handleToggleMic"
-        @end-call="handleEndCall"
-      />
-    </div>
+    <RoomVoiceActions
+      @toggleAudio="handleToggleAudio"
+      @toggleCamera="handleToggleCamera"
+      @toggleMic="handleToggleMic"
+      @end-call="handleEndCall"
+    />
   </div>
 </template>

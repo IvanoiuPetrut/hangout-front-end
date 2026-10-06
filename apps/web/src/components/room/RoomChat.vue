@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, nextTick, computed } from "vue";
+import { onMounted, onUnmounted, ref, nextTick } from "vue";
 import type { message } from "@/types/types";
 import { getCookie } from "@helpers/cookie";
 import { useUserStore } from "@/stores/user";
@@ -18,16 +18,6 @@ const props = defineProps<{
   messages: Array<message>;
   roomId: string;
 }>();
-
-const messageWritterWrapper = ref<HTMLDivElement | null>(null);
-const messageWritterWrapperHeight = ref<number>(0);
-const resizeObserver = ref<ResizeObserver | null>(null);
-
-const chatSize = computed(() => {
-  return {
-    maxHeight: `calc(100vh - ${messageWritterWrapperHeight.value - 45}px - 12rem)`
-  };
-});
 
 const selectedFriend = ref<Friend | null>(null);
 const newMessages = ref<Array<message>>([]);
@@ -65,12 +55,11 @@ function handleFriendProfileVisibility() {
   selectedFriend.value = null;
 }
 
-function scrollToBottom() {
+function scrollToBottom(smooth = false) {
   nextTick(() => {
     const chat = document.querySelector(".users-chat");
-    console.log(chat);
     if (chat) {
-      chat.scrollTop = chat.scrollHeight;
+      chat.scrollTo({ top: chat.scrollHeight, behavior: smooth ? "smooth" : "auto" });
     }
   });
 }
@@ -90,12 +79,6 @@ async function handleUploadFile(file: File) {
   }
 }
 
-function updateHeight() {
-  if (messageWritterWrapper.value) {
-    messageWritterWrapperHeight.value = messageWritterWrapper.value.offsetHeight;
-  }
-}
-
 onMounted(async () => {
   newMessages.value.push(...props.messages);
   useSocketStore().socket.emit("joinChatRoom", {
@@ -105,13 +88,10 @@ onMounted(async () => {
 
   useSocketStore().socket.on("chatRoomChatMessage", (message) => {
     newMessages.value.push(message);
-    scrollToBottom();
+    scrollToBottom(true);
   });
   await executeGetUserDetails();
   scrollToBottom();
-  updateHeight();
-  resizeObserver.value = new ResizeObserver(updateHeight);
-  resizeObserver.value.observe(messageWritterWrapper.value!);
 });
 
 onUnmounted(() => {
@@ -121,44 +101,41 @@ onUnmounted(() => {
   });
 
   useSocketStore().socket.off("chatRoomChatMessage");
-
-  if (resizeObserver.value) {
-    resizeObserver.value.disconnect();
-  }
 });
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full">
+  <div class="flex h-full w-full flex-col">
     <FriendProfile
       :friend="selectedFriend"
       v-if="selectedFriend"
       @toggle-friend-profile-visibility="handleFriendProfileVisibility"
-      class="fixed top-30 right-4 z-50"
+      class="fixed right-4 top-36 z-50"
     />
-    <div class="px-4 pb-4 overflow-y-auto users-chat" :style="chatSize">
-      <ul v-if="userDetails && newMessages" class="flex flex-col gap-4">
+    <div class="users-chat min-h-0 flex-1 overflow-y-auto px-4 py-6">
+      <ul v-if="userDetails && newMessages" class="mx-auto flex max-w-4xl flex-col gap-3">
         <li v-for="(message, index) in newMessages" :key="index">
-          <div class="flex gap-2">
-            <MessageBubble
-              :message="message.content"
-              :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
-              :photo-url="message.senderPhoto"
-              :sender-name="message.senderName"
-              :created-at="message.createdAt"
-              @toggle-selected-friend="
-                handleSelectFriend(message.senderId, message.senderName, message.senderPhoto)
-              "
-            />
-          </div>
+          <MessageBubble
+            :message="message.content"
+            :from-who="whoIsOwnerOfMessage(message.senderId, userDetails.id)"
+            :photo-url="message.senderPhoto"
+            :sender-name="message.senderName"
+            :created-at="message.createdAt"
+            @toggle-selected-friend="
+              handleSelectFriend(message.senderId, message.senderName, message.senderPhoto)
+            "
+          />
+        </li>
+        <li v-if="newMessages.length === 0" class="empty-state mt-10">
+          This room is quiet. Start the conversation!
         </li>
       </ul>
+      <div v-else class="flex h-full items-center justify-center">
+        <span class="loading loading-dots loading-md text-base-content/40"></span>
+      </div>
     </div>
-    <div class="mt-auto" ref="messageWritterWrapper">
-      <MessageWritter
-        @send-message="handleSendMessage"
-        @upload-file="handleUploadFile"
-      />
+    <div class="mx-auto w-full max-w-4xl px-4 pb-4">
+      <MessageWritter @send-message="handleSendMessage" @upload-file="handleUploadFile" />
     </div>
   </div>
 </template>

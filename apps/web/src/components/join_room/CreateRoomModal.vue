@@ -26,8 +26,11 @@ async function handleCreateChatRoom() {
 </script>
 
 <template>
-  <button class="btn btn-primary" onclick="my_modal_1.showModal()">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+  <button
+    class="btn btn-primary relative w-full shadow-lg shadow-primary/25 sm:w-fit"
+    onclick="my_modal_1.showModal()"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
       <path
         fill-rule="evenodd"
         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
@@ -38,8 +41,9 @@ async function handleCreateChatRoom() {
   </button>
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box">
-      <h3 class="font-bold text-lg">Create a new room!</h3>
-      <label class="form-control w-full max-w-xs py-4">
+      <h3 class="text-xl font-bold">Create a new room</h3>
+      <p class="mt-1 text-sm text-base-content/60">Pick a short, memorable name.</p>
+      <label class="form-control w-full py-4">
         <div class="label">
           <span class="label-text">What is the room name?</span>
         </div>
@@ -47,11 +51,11 @@ async function handleCreateChatRoom() {
           v-model="roomName"
           type="text"
           placeholder="Awesome room name"
-          class="input input-bordered input-primary w-full max-w-xs"
+          class="input input-bordered w-full focus:border-primary"
           spellcheck="false"
         />
         <div class="label flex flex-col items-start">
-          <span v-if="!isRoomNameLongEnough" class="label-text-alt text-error"
+          <span v-if="roomName && !isRoomNameLongEnough" class="label-text-alt text-error"
             >Room name must be at least 4 characters long</span
           >
           <span v-if="!isRoomNameMadeOfAlphaNumericCharacters" class="label-text-alt text-error"
@@ -60,17 +64,18 @@ async function handleCreateChatRoom() {
         </div>
       </label>
       <div class="modal-action">
-        <form method="dialog">
+        <form method="dialog" class="flex flex-row-reverse gap-2">
           <button
             @click="handleCreateChatRoom"
-            class="btn btn-primary mr-4"
-            :disabled="!isRoomNameLongEnough && !isRoomNameMadeOfAlphaNumericCharacters"
+            class="btn btn-primary"
+            :disabled="!isRoomNameLongEnough || !isRoomNameMadeOfAlphaNumericCharacters"
           >
             Create
           </button>
-          <button class="btn">Cancel</button>
+          <button class="btn btn-ghost">Cancel</button>
         </form>
       </div>
     </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 </template>

@@ -4,7 +4,11 @@ import { useAsyncRequest } from "@/helpers/asyncRequest";
 import { getJoinedChatRooms } from "@/services/chatRoom/chatRoomInteractor";
 import { useJoinedRoomsStore } from "@/stores/joinedRooms";
 
-const isRoomListVisible = ref(false);
+const emit = defineEmits<{
+  (e: "navigate"): void;
+}>();
+
+const isRoomListVisible = ref(true);
 const { data: joinedRooms, execute: executeGetJoinedChatRooms } =
   useAsyncRequest(getJoinedChatRooms);
 
@@ -21,54 +25,45 @@ onMounted(async () => {
 </script>
 
 <template>
-  <button @click="toggleRoomListVisibility">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-      <path
-        d="M5.566 4.657A4.505 4.505 0 0 1 6.75 4.5h10.5c.41 0 .806.055 1.183.157A3 3 0 0 0 15.75 3h-7.5a3 3 0 0 0-2.684 1.657ZM2.25 12a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3v-6ZM5.25 7.5c-.41 0-.806.055-1.184.157A3 3 0 0 1 6.75 6h10.5a3 3 0 0 1 2.683 1.657A4.505 4.505 0 0 0 18.75 7.5H5.25Z"
-      />
-    </svg>
-    Joined rooms
-    <div class="swap swap-rotate">
+  <div class="flex flex-col gap-1">
+    <button
+      @click="toggleRoomListVisibility"
+      class="flex items-center justify-between px-3 pb-1 pt-2 hover:text-base-content"
+    >
+      <span class="section-title">Rooms · {{ useJoinedRoomsStore().joinedRooms.length }}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
+        viewBox="0 0 20 20"
         fill="currentColor"
-        class="w-4 h-4 swap"
-        :class="{ 'swap-on': isRoomListVisible, 'swap-off': !isRoomListVisible }"
+        class="h-4 w-4 text-base-content/50 transition-transform duration-200"
+        :class="{ '-rotate-90': !isRoomListVisible }"
       >
         <path
           fill-rule="evenodd"
-          d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
+          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
           clip-rule="evenodd"
         />
       </svg>
+    </button>
 
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        class="w-4 h-4"
-        :class="{ 'swap-on': !isRoomListVisible, 'swap-off': isRoomListVisible }"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </div>
-  </button>
-
-  <ul
-    v-if="useJoinedRoomsStore().joinedRooms.length > 0"
-    :class="{ 'scale-y-0': !isRoomListVisible }"
-    class="menu bg-base-100 gap-4 transition-all rounded-md"
-  >
-    <li v-for="room in useJoinedRoomsStore().joinedRooms" :key="room.id">
-      <RouterLink :to="{ name: 'chat-room', params: { roomId: room.id } }">
-        {{ room.name }}
-      </RouterLink>
-    </li>
-  </ul>
-  <p v-else class="opacity-70">No chat rooms joined</p>
+    <template v-if="isRoomListVisible">
+      <ul v-if="useJoinedRoomsStore().joinedRooms.length > 0" class="flex flex-col gap-0.5">
+        <li v-for="room in useJoinedRoomsStore().joinedRooms" :key="room.id">
+          <RouterLink
+            :to="{ name: 'chat-room', params: { roomId: room.id } }"
+            class="nav-link py-2"
+            @click="emit('navigate')"
+          >
+            <span
+              class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-primary/25 to-accent/25 text-xs font-bold uppercase text-base-content"
+            >
+              {{ room.name.charAt(0) }}
+            </span>
+            <span class="truncate">{{ room.name }}</span>
+          </RouterLink>
+        </li>
+      </ul>
+      <p v-else class="px-3 py-2 text-sm text-base-content/50">No chat rooms joined yet</p>
+    </template>
+  </div>
 </template>

@@ -13,7 +13,6 @@ const emit = defineEmits<{
 function handleSendMessage() {
   if (message.value.trim()) {
     emit("sendMessage", message.value);
-    console.log("Message sent: ", message.value);
     message.value = "";
     rows.value = 1;
   }
@@ -24,7 +23,6 @@ function handleUploadFile(file: File) {
 }
 
 function handleKeyUp(event: KeyboardEvent) {
-  console.log("Key pressed: ", event.key);
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     handleSendMessage();
@@ -39,30 +37,35 @@ function adjustRows() {
 </script>
 
 <template>
-  <div class="relative">
+  <div
+    class="flex items-end gap-1 rounded-2xl border border-base-content/10 bg-base-200/80 p-1.5 shadow-lg shadow-black/5 backdrop-blur-xl transition-colors focus-within:border-primary/50"
+  >
+    <SendFile @upload-file="handleUploadFile" />
     <textarea
       v-model="message"
       @keyup.enter.exact="handleKeyUp"
       @keyup.shift.enter.stop
       @input="adjustRows"
       placeholder="Type a message..."
-      class="textarea textarea-bordered textarea-sm w-full pr-10"
+      class="textarea min-h-0 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[0.95rem] leading-6 focus:outline-none"
       :rows="rows"
     ></textarea>
-    <div class="flex gap-2 absolute right-2 top-2">
-      <button @click="handleSendMessage" class="btn btn-sm bg-base-100 border-0 btn-square">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z"
-          />
-        </svg>
-      </button>
-      <SendFile @upload-file="handleUploadFile" class="" />
-    </div>
+    <button
+      @click="handleSendMessage"
+      class="btn btn-primary btn-square btn-sm h-9 w-9 shrink-0 shadow-md shadow-primary/30 disabled:shadow-none"
+      :disabled="!message.trim()"
+      aria-label="Send message"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="h-4 w-4"
+      >
+        <path
+          d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z"
+        />
+      </svg>
+    </button>
   </div>
 </template>

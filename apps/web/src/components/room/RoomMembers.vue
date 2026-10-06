@@ -24,33 +24,43 @@ function isTheLoggedUser(userId: string): boolean {
 </script>
 
 <template>
-  <!-- <span class="badge badge-primary badge-sm">Owner</span>
-  <span class="badge badge-neutral badge-sm">Member</span>
-  <span class="badge badge-secondary badge-sm">Moderator</span> -->
-  <ul class="flex flex-col gap-4">
-    <li
-      v-for="member in props.members"
-      :key="member.id"
-      class="flex gap-2 md:gap-12 items-center justify-between md:justify-normal"
-    >
-      <div class="flex gap-2 items-center md:gap-4">
-        <div class="mask mask-circle w-8 h-8 md:w-12 md:h-12">
-          <img :src="member.photo" alt="Avatar Tailwind CSS Component" />
-        </div>
-        <p class="font-bold text-sm md:text-lg">{{ member.username }}</p>
+  <div class="h-full overflow-y-auto">
+    <div class="mx-auto flex max-w-3xl flex-col gap-4 p-4 sm:p-6">
+      <div class="flex items-center gap-2">
+        <h2 class="text-lg font-semibold">Members</h2>
+        <span class="badge badge-ghost badge-sm">{{ props.members.length }}</span>
       </div>
-      <span v-if="isUserOwner(props.ownerId, member.id)" class="badge badge-primary badge-sm"
-        >Owner</span
-      >
-      <span v-else class="badge badge-neutral badge-sm">Member</span>
+      <ul class="surface divide-y divide-base-content/[0.06] overflow-visible">
+        <li
+          v-for="member in props.members"
+          :key="member.id"
+          class="flex items-center gap-3 px-4 py-3"
+        >
+          <div class="avatar">
+            <div class="w-10 rounded-full ring-1 ring-base-content/10">
+              <img :src="member.photo" :alt="member.username" />
+            </div>
+          </div>
+          <div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
+            <p class="truncate font-medium">{{ member.username }}</p>
+            <span v-if="isUserOwner(props.ownerId, member.id)" class="badge badge-primary badge-sm"
+              >Owner</span
+            >
+            <span v-else class="badge badge-ghost badge-sm">Member</span>
+            <span v-if="isTheLoggedUser(member.id)" class="text-xs text-base-content/40"
+              >(you)</span
+            >
+          </div>
 
-      <QuickActionMemberSettings
-        :owner-id="props.ownerId"
-        :user-id="member.id"
-        :room-id="props.roomId"
-        @user-kicked="emit('userKicked', $event)"
-        v-if="!isUserOwner(props.ownerId, member.id) && !isTheLoggedUser(member.id)"
-      />
-    </li>
-  </ul>
+          <QuickActionMemberSettings
+            :owner-id="props.ownerId"
+            :user-id="member.id"
+            :room-id="props.roomId"
+            @user-kicked="emit('userKicked', $event)"
+            v-if="!isUserOwner(props.ownerId, member.id) && !isTheLoggedUser(member.id)"
+          />
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>

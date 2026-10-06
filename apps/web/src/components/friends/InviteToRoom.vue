@@ -29,32 +29,41 @@ onMounted(async () => {
 </script>
 
 <template>
-  <button class="btn btn-sm btn-primary mb-2" onclick="modal_profile.showModal()">
+  <button class="btn btn-primary btn-sm w-full" onclick="modal_profile.showModal()">
     Invite to room
   </button>
   <dialog id="modal_profile" class="modal">
     <div class="modal-box">
-      <h3 class="font-bold text-lg">Rooms where the user can be invited:</h3>
-      <label class="form-control w-full max-w-xs py-4">
-        <ul v-if="rooms" class="flex flex-col gap-2">
-          <li
-            v-for="room in rooms"
-            :key="room.id"
-            class="flex items-center justify-between gap-4 bg-base-200 p-2 rounded-md border border-neutral"
-          >
-            <span>{{ room.name }}</span>
-            <button class="btn btn-sm btn-neutral" @click="handleInviteToRoom(room.id)">
-              Invite
-            </button>
-          </li>
-        </ul>
-        <p v-else>You have no rooms or is already part of your available rooms.</p>
-      </label>
-      <div class="modal-action mt-0">
+      <h3 class="text-xl font-bold">Invite {{ props.friend.username }}</h3>
+      <p class="mt-1 text-sm text-base-content/60">Rooms they're not part of yet.</p>
+      <ul v-if="rooms && rooms.length > 0" class="mt-4 flex flex-col gap-2">
+        <li
+          v-for="room in rooms"
+          :key="room.id"
+          class="flex items-center justify-between gap-4 rounded-btn bg-base-200 p-2 pl-3 ring-1 ring-base-content/5"
+        >
+          <span class="flex min-w-0 items-center gap-3">
+            <span
+              class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-primary/25 to-accent/25 text-xs font-bold uppercase"
+            >
+              {{ room.name.charAt(0) }}
+            </span>
+            <span class="truncate font-medium">{{ room.name }}</span>
+          </span>
+          <button class="btn btn-primary btn-sm" @click="handleInviteToRoom(room.id)">
+            Invite
+          </button>
+        </li>
+      </ul>
+      <p v-else class="empty-state mt-4">
+        No rooms available. They may already be in all of your rooms.
+      </p>
+      <div class="modal-action">
         <form method="dialog">
-          <button class="btn">Close</button>
+          <button class="btn btn-ghost">Close</button>
         </form>
       </div>
     </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 </template>

@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import RegisterItem from '@/components/register/RegisterItem.vue'
+import AuthLayout from "@/components/auth/AuthLayout.vue";
+import RegisterItem from "@/components/register/RegisterItem.vue";
 </script>
 
 <template>
-  <main class="h-screen grid place-items-center">
-    <div class="md:w-96">
-      <h1 class="text-4xl font-extrabold text-center mb-8">Create an account now!</h1>
-      <RegisterItem />
-    </div>
-  </main>
+  <AuthLayout title="Create your account" subtitle="It takes less than a minute.">
+    <RegisterItem />
+  </AuthLayout>
 </template>

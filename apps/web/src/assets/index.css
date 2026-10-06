@@ -2,11 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-.router-link-exact-active {
-  color: oklch(var(--p));
-  background-color: oklch(var(--p) / 0.1);
+@layer base {
+  html,
+  body {
+    @apply bg-base-100 text-base-content antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  body {
+    background-image: radial-gradient(
+        60rem 40rem at 100% -10%,
+        oklch(var(--p) / 0.08),
+        transparent 60%
+      ),
+      radial-gradient(50rem 30rem at -10% 110%, oklch(var(--s) / 0.06), transparent 60%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--bc) / 0.15) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: oklch(var(--bc) / 0.15);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-box {
+    @apply border border-base-content/10 shadow-2xl;
+  }
+
+  .modal-backdrop,
+  .modal {
+    @apply backdrop-blur-sm;
+  }
+}
+
+@layer components {
+  /* Translucent surface used for panels, cards and navigation */
+  .surface {
+    @apply rounded-box border border-base-content/[0.06] bg-base-200/70 backdrop-blur-xl;
+  }
+
+  .surface-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
+  }
+
+  .brand-mark {
+    @apply grid place-items-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-content shadow-lg shadow-primary/30;
+  }
+
+  .section-title {
+    @apply text-xs font-semibold uppercase tracking-wider text-base-content/50;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-base-content/70 transition-colors hover:bg-base-content/5 hover:text-base-content;
+  }
+
+  .nav-link.router-link-active {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center justify-center gap-2 rounded-box border border-dashed border-base-content/10 p-6 text-center text-sm text-base-content/50;
+  }
 }
 
 .bg-primary-transparent {
   background-color: oklch(var(--p) / 0.1);
+}
+
+/* Route transitions */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.page-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

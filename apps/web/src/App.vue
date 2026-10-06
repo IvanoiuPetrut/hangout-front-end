@@ -45,10 +45,19 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header>
+  <header class="sticky top-0 z-40">
     <BaseNavigation @toggle-menu-visibility="handleToggleMenuVisibility" />
   </header>
-  <div :class="[shouldContentHavePadding ? 'sm:pl-56' : 'pl-0']">
-    <RouterView />
+  <div
+    class="transition-[padding] duration-300"
+    :class="[shouldContentHavePadding ? 'sm:pl-64' : 'pl-0']"
+  >
+    <RouterView v-slot="{ Component, route }">
+      <Transition name="page" mode="out-in">
+        <div :key="String(route.name)">
+          <component :is="Component" />
+        </div>
+      </Transition>
+    </RouterView>
   </div>
 </template>

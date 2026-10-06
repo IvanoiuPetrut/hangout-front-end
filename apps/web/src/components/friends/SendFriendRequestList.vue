@@ -54,23 +54,32 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <ul>
-    <li class="flex items-center gap-2 mt-4" v-for="user in availableRequests" :key="user.id">
-      <img :src="user.photo" class="mask mask-squircle w-8" />
-      <span>{{ user.username }}</span>
-      <button @click="handleSendFriendRequest(user.id)" class="btn btn-sm btn-primary">
-        Send Request
+  <ul class="mt-4 flex flex-col gap-2">
+    <li
+      v-for="user in availableRequests"
+      :key="user.id"
+      class="flex items-center gap-3 rounded-btn bg-base-200 p-2 pl-3 ring-1 ring-base-content/5"
+    >
+      <img :src="user.photo" class="h-9 w-9 rounded-full object-cover" />
+      <span class="flex-1 truncate font-medium">{{ user.username }}</span>
+      <button @click="handleSendFriendRequest(user.id)" class="btn btn-primary btn-sm">
+        Send request
       </button>
     </li>
-  </ul>
-  <ul>
-    <li class="flex items-center gap-2 mt-4" v-for="user in pendingRequests" :key="user.id">
-      <img :src="user.photo" class="mask mask-squircle w-8" />
-      <span>{{ user.username }}</span>
-      <button class="btn btn-sm btn-primary" disabled>Pending</button>
+    <li
+      v-for="user in pendingRequests"
+      :key="user.id"
+      class="flex items-center gap-3 rounded-btn bg-base-200 p-2 pl-3 ring-1 ring-base-content/5"
+    >
+      <img :src="user.photo" class="h-9 w-9 rounded-full object-cover" />
+      <span class="flex-1 truncate font-medium">{{ user.username }}</span>
+      <span class="badge badge-ghost gap-1 py-3">
+        <span class="loading loading-dots loading-xs"></span>
+        Pending
+      </span>
     </li>
   </ul>
-  <p v-if="availableRequests.length === 0 && pendingRequests.length === 0" class="mt-2">
+  <p v-if="availableRequests.length === 0 && pendingRequests.length === 0" class="empty-state">
     No results found.
   </p>
 </template>

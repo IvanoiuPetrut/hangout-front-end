@@ -35,29 +35,37 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h3 class="font-bold text-xl mb-2">Chat room requests - {{ chatRoomInvites?.length }}</h3>
-  <ul class="flex flex-col gap-2" v-if="chatRoomInvites">
+  <div class="mb-4 flex items-center gap-2">
+    <h3 class="text-lg font-semibold">Room invites</h3>
+    <span class="badge badge-secondary badge-sm">{{ chatRoomInvites?.length ?? 0 }}</span>
+  </div>
+  <ul class="flex flex-col gap-2" v-if="chatRoomInvites && chatRoomInvites.length > 0">
     <li
       v-for="request in chatRoomInvites"
       :key="request.id"
-      class="flex items-center justify-between sm:justify-normal sm:gap-16 py-2"
+      class="flex animate-fade-up items-center justify-between gap-4 rounded-btn bg-base-100/50 p-3 text-left ring-1 ring-base-content/5"
     >
-      <div class="flex items-center">
-        <div class="ml-2">
-          <p class="font-bold">{{ request.roomName }}</p>
-          <p class="text-sm opacity-70">wants you to be part of it</p>
+      <div class="flex min-w-0 items-center gap-3">
+        <span
+          class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-secondary/30 to-primary/30 font-bold uppercase"
+        >
+          {{ request.roomName.charAt(0) }}
+        </span>
+        <div class="min-w-0">
+          <p class="truncate font-semibold">{{ request.roomName }}</p>
+          <p class="text-sm text-base-content/60">invited you to join</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex shrink-0 items-center gap-2">
         <button
           @click="handleAcceptChatRoomInvite(request.id)"
-          class="btn btn-circle btn-sm btn-success"
+          class="btn btn-success btn-sm gap-1"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            class="w-5 h-5"
+            class="h-4 w-4"
           >
             <path
               fill-rule="evenodd"
@@ -65,16 +73,18 @@ onMounted(async () => {
               clip-rule="evenodd"
             />
           </svg>
+          <span class="hidden sm:inline">Accept</span>
         </button>
         <button
           @click="handleDeclineChatRoomInvite(request.id)"
-          class="btn btn-circle btn-sm btn-error"
+          class="btn btn-ghost btn-sm btn-square text-base-content/60 hover:bg-error/10 hover:text-error"
+          aria-label="Decline"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            class="w-5 h-5"
+            class="h-4 w-4"
           >
             <path
               d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
@@ -83,6 +93,6 @@ onMounted(async () => {
         </button>
       </div>
     </li>
-    <li v-if="chatRoomInvites.length == 0" class="opacity-70">No chat room requests</li>
   </ul>
+  <p v-else class="empty-state">No room invites right now</p>
 </template>

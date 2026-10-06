@@ -78,30 +78,37 @@ onMounted(async () => {
 
 <template>
   <BaseAlert v-if="alertText" class="alert-success"> {{ alertText }} </BaseAlert>
-  <h3 class="font-bold text-xl mb-2">Friend requests - {{ numberOfFriendRequests }}</h3>
+  <div class="mb-4 flex items-center gap-2">
+    <h3 class="text-lg font-semibold">Friend requests</h3>
+    <span class="badge badge-primary badge-sm">{{ numberOfFriendRequests }}</span>
+  </div>
   <ul class="flex flex-col gap-2" v-if="friendRequestsWithDetails.length > 0">
     <li
       v-for="request in friendRequestsWithDetails"
       :key="request.from"
-      class="flex items-center justify-between sm:justify-normal sm:gap-16 py-2"
+      class="flex animate-fade-up items-center justify-between gap-4 rounded-btn bg-base-100/50 p-3 ring-1 ring-base-content/5"
     >
-      <div class="flex items-center">
-        <img :src="request.photo" alt="user photo" class="w-10 h-10 rounded-full" />
-        <div class="ml-2">
-          <p class="font-bold">{{ request.username }}</p>
-          <p class="text-sm opacity-70">wants to be your friend</p>
+      <div class="flex min-w-0 items-center gap-3">
+        <img
+          :src="request.photo"
+          alt="user photo"
+          class="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-base-content/10"
+        />
+        <div class="min-w-0">
+          <p class="truncate font-semibold">{{ request.username }}</p>
+          <p class="text-sm text-base-content/60">wants to be your friend</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex shrink-0 items-center gap-2">
         <button
           @click="handleAcceptFriendRequest(request.from)"
-          class="btn btn-circle btn-sm btn-success"
+          class="btn btn-success btn-sm gap-1"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            class="w-5 h-5"
+            class="h-4 w-4"
           >
             <path
               fill-rule="evenodd"
@@ -109,16 +116,18 @@ onMounted(async () => {
               clip-rule="evenodd"
             />
           </svg>
+          <span class="hidden sm:inline">Accept</span>
         </button>
         <button
           @click="handleDeclineFriendRequest(request.from)"
-          class="btn btn-circle btn-sm btn-error"
+          class="btn btn-ghost btn-sm btn-square text-base-content/60 hover:bg-error/10 hover:text-error"
+          aria-label="Decline"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            class="w-5 h-5"
+            class="h-4 w-4"
           >
             <path
               d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
@@ -128,5 +137,5 @@ onMounted(async () => {
       </div>
     </li>
   </ul>
-  <p class="opacity-70" v-else>No friend requests</p>
+  <p class="empty-state" v-else>No friend requests right now</p>
 </template>

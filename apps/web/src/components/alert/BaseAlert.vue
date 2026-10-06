@@ -1,12 +1,15 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div role="alert" class="alert w-96 absolute bottom-4 right-4">
+  <div
+    role="alert"
+    class="alert fixed bottom-4 right-4 z-[100] w-[calc(100%-2rem)] max-w-sm animate-fade-up border-0 shadow-2xl"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      class="stroke-current shrink-0 w-6 h-6"
+      class="h-6 w-6 shrink-0 stroke-current"
     >
       <path
         stroke-linecap="round"

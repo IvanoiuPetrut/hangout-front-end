@@ -23,75 +23,111 @@ function handleLogout(): void {
 </script>
 
 <template>
-  <ul class="menu bg-base-200 w-56 gap-4">
-    <li>
-      <RouterLink :to="{ name: 'home' }" @click="handleToggleMenuVisibility">
+  <aside
+    class="flex w-64 flex-col gap-6 border-r border-base-content/[0.06] bg-base-200/90 p-3 backdrop-blur-xl"
+  >
+    <div class="flex flex-col gap-1">
+      <p class="section-title px-3 pb-1 pt-2">Menu</p>
+      <RouterLink :to="{ name: 'home' }" class="nav-link" @click="handleToggleMenuVisibility">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-5 w-5"
         >
           <path
-            fill-rule="evenodd"
-            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
-            clip-rule="evenodd"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
           />
         </svg>
         Home
       </RouterLink>
-    </li>
-    <li>
-      <RouterLink :to="{ name: 'friends' }" @click="handleToggleMenuVisibility">
+      <RouterLink :to="{ name: 'friends' }" class="nav-link" @click="handleToggleMenuVisibility">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-5 w-5"
         >
           <path
-            d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 0 0-1.588-3.755 4.502 4.502 0 0 1 5.874 2.636.818.818 0 0 1-.36.98A7.465 7.465 0 0 1 14.5 16Z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
           />
         </svg>
         Friends
       </RouterLink>
-    </li>
-    <li>
-      <RouterLink :to="{ name: 'join-room' }" @click="handleToggleMenuVisibility">
+      <RouterLink
+        :to="{ name: 'notifications' }"
+        class="nav-link"
+        @click="handleToggleMenuVisibility"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="w-5 h-5"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM6.75 9.25a.75.75 0 0 0 0 1.5h4.59l-2.1 1.95a.75.75 0 0 0 1.02 1.1l3.5-3.25a.75.75 0 0 0 0-1.1l-3.5-3.25a.75.75 0 1 0-1.02 1.1l2.1 1.95H6.75Z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        Join a room
-      </RouterLink>
-    </li>
-    <li><JoinedRooms /></li>
-    <li class="mt-auto">
-      <button @click="handleLogout">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
           viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-5 h-5"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-5 w-5"
         >
           <path
-            fill-rule="evenodd"
-            d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6ZM5.78 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 0 0 0 1.06l3 3a.75.75 0 0 0 1.06-1.06l-1.72-1.72H15a.75.75 0 0 0 0-1.5H4.06l1.72-1.72a.75.75 0 0 0 0-1.06Z"
-            clip-rule="evenodd"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z"
           />
         </svg>
+        Inbox
+      </RouterLink>
+      <RouterLink :to="{ name: 'join-room' }" class="nav-link" @click="handleToggleMenuVisibility">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-5 w-5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+        </svg>
+        New room
+      </RouterLink>
+    </div>
 
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      <JoinedRooms @navigate="handleToggleMenuVisibility" />
+    </div>
+
+    <div class="flex flex-col gap-2 border-t border-base-content/[0.06] pt-3">
+      <BaseAvatar />
+      <button
+        @click="handleLogout"
+        class="nav-link w-full text-error/80 hover:bg-error/10 hover:text-error"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.75"
+          stroke="currentColor"
+          class="h-5 w-5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H21"
+          />
+        </svg>
         Logout
       </button>
-    </li>
-    <BaseAvatar />
-  </ul>
+    </div>
+  </aside>
 </template>

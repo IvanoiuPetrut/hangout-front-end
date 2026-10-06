@@ -17,33 +17,45 @@ async function handleRemoveFriend() {
 </script>
 
 <template>
-  <div class="flex flex-col items-center w-48 bg-base-200 px-4 py-5 rounded-xl shadow-2xl">
-    <div class="flex items-center justify-between w-full mb-4">
-      <h4 class="text-xl font-bold">
-        {{ props.friend.username }}
-      </h4>
+  <div
+    class="w-64 animate-pop-in overflow-hidden rounded-box border border-base-content/10 bg-base-200 shadow-2xl"
+  >
+    <div class="relative h-20 bg-gradient-to-br from-primary/60 via-accent/40 to-secondary/40">
       <button
         @click="emit('toggleFriendProfileVisibility')"
-        class="btn btn-xs btn-circle btn-neutral"
+        class="btn btn-circle btn-ghost btn-xs absolute right-2 top-2 bg-base-100/40 backdrop-blur"
+        aria-label="Close profile"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          stroke-width="2"
           stroke="currentColor"
-          class="w-4 h-4"
+          class="h-3.5 w-3.5"
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
-    <div class="avatar mb-6">
-      <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-        <img :src="props.friend.photo" />
+    <div class="flex flex-col items-center px-5 pb-5">
+      <div class="avatar -mt-10 mb-3">
+        <div class="w-20 rounded-full ring-4 ring-base-200">
+          <img :src="props.friend.photo" :alt="props.friend.username" />
+        </div>
+      </div>
+      <h4 class="mb-4 text-lg font-bold">
+        {{ props.friend.username }}
+      </h4>
+      <div class="flex w-full flex-col gap-2">
+        <InviteToRoom :friend="props.friend" />
+        <button
+          @click="handleRemoveFriend"
+          class="btn btn-ghost btn-sm w-full text-error hover:bg-error/10"
+        >
+          Remove friend
+        </button>
       </div>
     </div>
-    <InviteToRoom :friend="props.friend" />
-    <button @click="handleRemoveFriend" class="btn btn-sm btn-neutral">Remove friend</button>
   </div>
 </template>

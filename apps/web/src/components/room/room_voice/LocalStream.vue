@@ -8,25 +8,33 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="relative group">
+  <div
+    class="group relative aspect-video w-full overflow-hidden rounded-2xl bg-base-300 ring-1 ring-base-content/10"
+  >
     <video
       v-if="props.localStream"
       :srcObject="props.localStream"
-      class="w-36 md:w-64 rounded-md group-hover:opacity-75 transition-opacity border-2 border-neutral"
+      class="h-full w-full object-cover"
       autoplay
       muted
       playsinline
     ></video>
-    <div v-else class="w-36 md:w-64 h-36 md:h-64 bg-base-200 border border-neutral rounded-md">
-      <div class="flex items-center justify-center h-full">
-        <img :src="useUserStore().photo" alt="Your profile picture" class="rounded-full" />
-      </div>
+    <div
+      v-else
+      class="flex h-full items-center justify-center bg-gradient-to-br from-primary/15 to-accent/10"
+    >
+      <img
+        :src="useUserStore().photo"
+        alt="Profile picture"
+        class="h-20 w-20 rounded-full object-cover ring-4 ring-base-100/50"
+      />
     </div>
 
     <span
-      class="font-bold absolute left-1/2 bottom-1 transform -translate-x-1/2 bg-base-200 px-2 py-1 rounded-md opacity-50 border border-neutral group-hover:opacity-100 transition-opacity"
+      class="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur"
     >
-      {{ useUserStore().userName }}
+      <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+      {{ useUserStore().userName }} (you)
     </span>
   </div>
 </template>
