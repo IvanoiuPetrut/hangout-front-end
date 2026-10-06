@@ -1,0 +1,20 @@
+{
+  "name": "hangout",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "run-p dev:*",
+    "dev:web": "npm run dev -w apps/web",
+    "dev:api": "npm run build -w apps/api && run-p api:watch api:serve",
+    "api:watch": "npm run buildw -w apps/api",
+    "api:serve": "npm run dev -w apps/api",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test:unit -w apps/web -- --run"
+  },
+  "devDependencies": {
+    "npm-run-all2": "^6.1.1"
+  }
+}

@@ -5,7 +5,7 @@ services:
     container_name: express-app
     restart: always
     volumes:
-      - sqlite-db:/app/prisma
+      - sqlite-db:/app/apps/api/prisma
 
   nginx:
     image: nginx:latest
