@@ -72,6 +72,26 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
+// Last resort: log the error and answer with JSON instead of Express's default
+// HTML page, which includes the stack trace unless NODE_ENV=production
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+  // Client errors such as malformed JSON bodies (body-parser sets the status)
+  const status = Number(err?.status ?? err?.statusCode);
+  if (status >= 400 && status < 500) {
+    return res.status(status).json({ error: "Invalid request" });
+  }
+  console.log(err);
+  res.status(500).json({ error: "Something went wrong" });
+});
+
+// Keep serving other users if a handler rejects without catching the error
+process.on("unhandledRejection", (reason) => {
+  console.log("Unhandled promise rejection:", reason);
+});
+
 // const server = http.createServer(app);
 const server = http.createServer(app);
 

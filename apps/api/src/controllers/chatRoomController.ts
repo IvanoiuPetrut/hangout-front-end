@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { publicErrorMessage } from "../helpers/errors.js";
 import { getUserId } from "../middleware/verifyUser.js";
 import { validateUserId } from "../validation/user.js";
 import {
@@ -49,7 +50,7 @@ async function getChatRoomDetails(req: Request, res: Response): Promise<void> {
 
     res.json(chatRoom);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -69,7 +70,7 @@ async function createChatRoom(req: Request, res: Response): Promise<void> {
 
     res.json(chatRoom);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -87,7 +88,7 @@ async function getJoinedRooms(req: Request, res: Response): Promise<void> {
 
     res.json(rooms);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -105,7 +106,7 @@ async function sendInviteToRoom(req: Request, res: Response): Promise<void> {
     );
     res.status(200).json(invite);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -123,7 +124,7 @@ async function getInvites(req: Request, res: Response): Promise<void> {
 
     res.json(invites);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -143,7 +144,7 @@ async function acceptInvite(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ message: "Invite accepted" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -163,7 +164,7 @@ async function rejectInvite(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ message: "Invite rejected" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -187,7 +188,7 @@ async function getUsersThatCanBeInvited(
 
     res.json(users);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -209,7 +210,7 @@ async function getRoomsWhereUserIsNotMember(
 
     res.json(rooms);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -231,7 +232,7 @@ async function kickUser(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ message: "User kicked" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -255,7 +256,7 @@ async function editChatRoomName(req: Request, res: Response): Promise<void> {
   } catch (error) {
     console.log("SUNTEM AICI");
     console.log(error.message);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: publicErrorMessage(error) });
   }
 }
 
@@ -280,7 +281,7 @@ async function editChatRoomDescription(
 
     res.status(200).json({ message: "Room description updated" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: publicErrorMessage(error) });
   }
 }
 
@@ -297,7 +298,7 @@ async function deleteChatRoom(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ message: "Room deleted" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: publicErrorMessage(error) });
   }
 }
 
@@ -315,7 +316,7 @@ async function leaveChatRoom(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ message: "Room left" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: publicErrorMessage(error) });
   }
 }
 

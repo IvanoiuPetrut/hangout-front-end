@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { publicErrorMessage } from "../helpers/errors.js";
 import { getUserId } from "../middleware/verifyUser.js";
 import { validateUserId } from "../validation/user.js";
 import { generateFriendsChatRoomId } from "../helpers/helpers.js";
@@ -36,7 +37,7 @@ async function getMessagesFromChatRoom(
 
     res.json(messages);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -60,7 +61,7 @@ async function getMessagesFromFriendChatRoom(
 
     res.json(messages);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -115,10 +116,10 @@ async function uploadFile(req: Request, res: Response) {
     res.json({ fileUrl: fileUrl });
   } catch (error) {
     if (error instanceof UploadQuotaError) {
-      res.status(507).json({ error: error.message });
+      res.status(507).json({ error: publicErrorMessage(error) });
       return;
     }
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 

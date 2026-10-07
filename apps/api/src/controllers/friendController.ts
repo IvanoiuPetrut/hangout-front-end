@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { publicErrorMessage } from "../helpers/errors.js";
 import { getUserId } from "../middleware/verifyUser.js";
 
 import { validateUserId } from "../validation/user.js";
@@ -38,7 +39,7 @@ async function createFriendRequest(req: Request, res: Response): Promise<void> {
 
     res.json(friendRequest);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -56,7 +57,7 @@ async function getFriendRequest(req: Request, res: Response): Promise<void> {
 
     res.json(friendRequest);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -77,7 +78,7 @@ async function getPendingFriendRequest(
 
     res.json(friendRequest);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -97,7 +98,7 @@ async function acceptFriendRequest(req: Request, res: Response): Promise<void> {
 
     res.json(friendRequest);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -120,7 +121,7 @@ async function declineFriendRequest(
 
     res.json(friendRequest);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -138,7 +139,7 @@ async function getFriends(req: Request, res: Response): Promise<void> {
 
     res.json(friends);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
@@ -154,7 +155,7 @@ async function deleteFriend(req: Request, res: Response): Promise<void> {
 
     res.json(friendRequest);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: publicErrorMessage(error) });
   }
 }
 
