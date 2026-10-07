@@ -1,5 +1,5 @@
 # Build context is the monorepo root: docker build -f apps/web/Dockerfile .
-FROM node:18-alpine AS build
+FROM node:24-alpine AS build
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN npm ci -w apps/web --include-workspace-root=false
 COPY apps/web ./apps/web
 RUN npm run build -w apps/web
 
-FROM nginx:1.27-alpine
+FROM nginx:1.30-alpine
 
 # Lets nginx.conf.template use the container's DNS resolver
 ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
