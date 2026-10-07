@@ -32,6 +32,12 @@ import fs from "fs";
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.disable("x-powered-by");
+// Requests arrive through Traefik and then nginx, so the client IP (used for
+// rate limiting) is two proxy hops away. Override with TRUST_PROXY if the
+// proxy chain differs.
+app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 2));
+
 // No CORS headers: browsers only reach the API through the app's own origin
 // (nginx in production, the Vite dev server proxy in development)
 app.use(express.json());
