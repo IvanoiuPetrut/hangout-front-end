@@ -2,7 +2,9 @@ function setCookie(name: string, value: string, hoursToExpire: number): void {
   const expirationDate = new Date();
   expirationDate.setTime(expirationDate.getTime() + hoursToExpire * 60 * 60 * 1000);
 
-  const cookieString = `${name}=${value}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Lax;`;
+  // Secure keeps the login token off plain HTTP (local development still works)
+  const secure = window.location.protocol === "https:" ? " Secure;" : "";
+  const cookieString = `${name}=${value}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Lax;${secure}`;
   document.cookie = cookieString;
 }
 

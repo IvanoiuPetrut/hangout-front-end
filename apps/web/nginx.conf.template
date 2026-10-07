@@ -4,6 +4,15 @@
 server {
     listen 80;
     server_name _;
+    server_tokens off;
+
+    # Sent with every response. The CSP here only covers framing, <base> and
+    # plugins; the API adds a stricter sandbox CSP to /uploads.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(self), microphone=(self), geolocation=(), payment=(), usb=()" always;
+    add_header Content-Security-Policy "frame-ancestors 'none'; base-uri 'self'; object-src 'none'" always;
 
     resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
     set $api api:3000;
@@ -38,6 +47,8 @@ server {
     location /uploads/ {
         proxy_pass http://$api;
         proxy_set_header Host $host;
+        # Already added above; avoid sending it twice
+        proxy_hide_header X-Content-Type-Options;
     }
 
     # Vue single page app
