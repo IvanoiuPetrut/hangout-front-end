@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { hashPassword, verifyPassword } from "../helpers/password.js";
 import { signAccessToken } from "../middleware/verifyUser.js";
 
@@ -16,7 +16,7 @@ async function registerInteractor(
     throw new AuthError("Username is already taken", 409);
   }
 
-  const id = uuidv4();
+  const id = randomUUID();
   const passwordHash = await hashPassword(password);
   try {
     await createUserWithCredentialPersistence({ id, username, passwordHash });

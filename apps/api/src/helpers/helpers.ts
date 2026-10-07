@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 function generateFriendsChatRoomId(senderId: string, receiverId: string) {
   const userIds = [senderId, receiverId].sort();
@@ -6,7 +6,7 @@ function generateFriendsChatRoomId(senderId: string, receiverId: string) {
 }
 
 function generateChatRoomId() {
-  return uuidv4();
+  return randomUUID();
 }
 
 export { generateFriendsChatRoomId, generateChatRoomId };

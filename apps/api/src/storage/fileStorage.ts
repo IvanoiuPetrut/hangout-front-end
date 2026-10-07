@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 const UPLOADS_DIR = path.resolve(process.env.UPLOADS_DIR || "uploads");
 const UPLOADS_URL_PREFIX = "/uploads/";
@@ -52,7 +52,7 @@ async function saveFile({
   // Reserve the space before the async write so concurrent uploads can't overshoot
   usedBytes += buffer.length;
 
-  const fileName = `${uuidv4()}-${sanitizeFileName(originalName)}`;
+  const fileName = `${randomUUID()}-${sanitizeFileName(originalName)}`;
   try {
     await fs.promises.writeFile(path.join(UPLOADS_DIR, fileName), buffer);
   } catch (error) {
