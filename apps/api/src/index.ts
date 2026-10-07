@@ -7,11 +7,11 @@ import { friendRouter } from "./routes/friendRoute.js";
 import { messagesRouter } from "./routes/messagesRoute.js";
 import { chatRoomRouter } from "./routes/chatRoomRoute.js";
 import { UPLOADS_DIR } from "./storage/fileStorage.js";
+import { getUserId, verifyTokens } from "./middleware/verifyUser.js";
 import {
-  getUserId,
-  verifyTokens,
-  verifyTokenSocket,
-} from "./middleware/verifyUser.js";
+  getChatRoomMemberPersistence,
+  isChatRoomOwnerPersistence,
+} from "./persistance/chatRoomPersistence.js";
 
 import {
   handleCreateFriendChat,
@@ -24,7 +24,7 @@ import {
   leaveChatRoomSocket,
 } from "./sockets/messages.js";
 
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import http from "http";
 import https from "https";
 import fs from "fs";
@@ -81,13 +81,28 @@ server.listen(port, () => {
 const io = new Server(server);
 
 io.use(async (socket, next) => {
-  const token = socket.handshake.auth.token;
-  const isAuthenticated = await verifyTokenSocket(token);
-  if (isAuthenticated) {
+  // Handlers act as this user; ids and tokens in event payloads are ignored
+  const userId = await getUserId(socket.handshake.auth.token);
+  if (userId) {
+    socket.data.userId = userId;
     return next();
   }
   return next(new Error("Authentication error"));
 });
+
+// A handler that throws (e.g. on a malformed payload) must not crash the server
+function safe<T extends unknown[]>(
+  event: string,
+  handler: (...args: T) => Promise<void>
+) {
+  return async (...args: T) => {
+    try {
+      await handler(...args);
+    } catch (error) {
+      console.log(`Socket handler "${event}" failed:`, error);
+    }
+  };
+}
 
 type chatRoomUsers = {
   id: string;
@@ -103,163 +118,205 @@ type chatRooms = {
 
 const chatRooms: chatRooms[] = [];
 
-io.on("connection", (socket) => {
+function findVoiceRoom(chatRoomId: unknown): chatRooms | undefined {
+  return chatRooms.find((chatRoom) => chatRoom.chatRoomId === chatRoomId);
+}
+
+function isInVoiceRoom(chatRoom: chatRooms | undefined, socketId: string) {
+  return !!chatRoom?.users.some((user) => user.socketId === socketId);
+}
+
+// WebRTC signaling is only relayed between sockets in the same voice room
+function shareVoiceRoom(socketId: string, otherSocketId: unknown) {
+  return chatRooms.some(
+    (chatRoom) =>
+      isInVoiceRoom(chatRoom, socketId) &&
+      chatRoom.users.some((user) => user.socketId === otherSocketId)
+  );
+}
+
+io.on("connection", (socket: Socket) => {
+  const userId: string = socket.data.userId;
+
   socket.on("connect", () => {
     console.log("user connected", socket.id);
   });
 
-  socket.on("friendChatMessage", async (payload: friendChatMessagePayload) => {
-    handleFriendChatMessage(io, payload);
-  });
+  socket.on(
+    "friendChatMessage",
+    safe("friendChatMessage", async (payload: friendChatMessagePayload) => {
+      await handleFriendChatMessage(io, socket, payload);
+    })
+  );
 
-  socket.on("createFriendChat", async (payload: createFriendChatPayload) => {
-    handleCreateFriendChat(socket, payload);
-  });
+  socket.on(
+    "createFriendChat",
+    safe("createFriendChat", async (payload: createFriendChatPayload) => {
+      await handleCreateFriendChat(socket, payload);
+    })
+  );
 
-  socket.on("leaveFriendChat", async (payload: any) => {
-    leaveFriendChat(socket, payload);
-  });
+  socket.on(
+    "leaveFriendChat",
+    safe("leaveFriendChat", async (payload: any) => {
+      await leaveFriendChat(socket, payload);
+    })
+  );
 
-  socket.on("chatRoomChatMessage", async (payload: any) => {
-    handleChatRoomChatMessage(io, payload);
-  });
+  socket.on(
+    "chatRoomChatMessage",
+    safe("chatRoomChatMessage", async (payload: any) => {
+      await handleChatRoomChatMessage(io, socket, payload);
+    })
+  );
 
-  socket.on("joinChatRoom", async (chatRoomId: string) => {
-    joinChatRoomSocket(socket, chatRoomId);
-  });
+  socket.on(
+    "joinChatRoom",
+    safe("joinChatRoom", async (payload: any) => {
+      await joinChatRoomSocket(socket, payload);
+    })
+  );
 
-  socket.on("leaveChatRoom", async (chatRoomId: string) => {
-    leaveChatRoomSocket(socket, chatRoomId);
-  });
+  socket.on(
+    "leaveChatRoom",
+    safe("leaveChatRoom", async (payload: any) => {
+      await leaveChatRoomSocket(socket, payload);
+    })
+  );
 
   socket.on(
     "joinVoiceRoom",
-    async (payload: {
-      chatRoomId: string;
-      userName: string;
-      userPhoto: string;
-    }) => {
-      const userToken = socket.handshake.auth.token;
-      const userId = await getUserId(userToken);
-      socket.join(payload.chatRoomId + "-voice");
-      console.log(
-        "joinVoiceRoom",
-        payload.chatRoomId,
-        userId,
-        payload.userName
-      );
-      const chatRoom = chatRooms.find(
-        (chatRoom) => chatRoom.chatRoomId === payload.chatRoomId
-      );
-      if (chatRoom) {
-        chatRoom.users.push({
-          id: userId,
-          socketId: socket.id,
-          name: payload.userName,
-          photo: payload.userPhoto,
-        });
-      } else {
-        chatRooms.push({
-          chatRoomId: payload.chatRoomId,
-          users: [
-            {
-              id: userId,
-              socketId: socket.id,
-              name: payload.userName,
-              photo: payload.userPhoto,
-            },
-          ],
-        });
+    safe("joinVoiceRoom", async (payload: { chatRoomId: string }) => {
+      const chatRoomId = payload?.chatRoomId;
+      // Only members may join; name and photo come from their profile
+      const member = await getChatRoomMemberPersistence({ chatRoomId, userId });
+      if (!member) {
+        return;
       }
-      const newChatRoom = chatRooms.find(
-        (chatRoom) => chatRoom.chatRoomId === payload.chatRoomId
-      );
-      io.in(payload.chatRoomId + "-voice").emit(
-        "userJoinedVoiceRoom",
-        newChatRoom.users
-      );
-    }
+      socket.join(chatRoomId + "-voice");
+      console.log("joinVoiceRoom", chatRoomId, userId, member.username);
+      const voiceUser = {
+        id: userId,
+        socketId: socket.id,
+        name: member.username,
+        photo: member.photo ?? "",
+      };
+      let chatRoom = findVoiceRoom(chatRoomId);
+      if (chatRoom) {
+        chatRoom.users.push(voiceUser);
+      } else {
+        chatRoom = { chatRoomId, users: [voiceUser] };
+        chatRooms.push(chatRoom);
+      }
+      io.in(chatRoomId + "-voice").emit("userJoinedVoiceRoom", chatRoom.users);
+    })
   );
 
-  socket.on("leaveVoiceRoom", async (payload: { chatRoomId: string }) => {
-    const userToken = socket.handshake.auth.token;
-    const userId = await getUserId(userToken);
-    const chatRoom = chatRooms.find(
-      (chatRoom) => chatRoom.chatRoomId === payload.chatRoomId
-    );
-    if (chatRoom) {
-      const userIndex = chatRoom.users.findIndex((user) => user.id === userId);
-      if (userIndex > -1) {
-        chatRoom.users.splice(userIndex, 1);
+  socket.on(
+    "leaveVoiceRoom",
+    safe("leaveVoiceRoom", async (payload: { chatRoomId: string }) => {
+      const chatRoom = findVoiceRoom(payload?.chatRoomId);
+      if (chatRoom) {
+        const userIndex = chatRoom.users.findIndex(
+          (user) => user.id === userId
+        );
+        if (userIndex > -1) {
+          chatRoom.users.splice(userIndex, 1);
+        }
+        socket
+          .to(chatRoom.chatRoomId + "-voice")
+          .emit("userLeftVoiceRoom", chatRoom.users);
       }
-      socket
-        .to(payload.chatRoomId + "-voice")
-        .emit("userLeftVoiceRoom", chatRoom.users);
-    }
-  });
+    })
+  );
 
   socket.on(
     "sendIceCandidate",
-    async (payload: {
-      iceCandidate: any;
-      chatRoomId: string;
-      forUserId: string;
-    }) => {
-      console.log("sendIceCandidate");
-      const userId = await getUserId(socket.handshake.auth.token);
-      const socketId = chatRooms
-        .find((chatRoom) => chatRoom.chatRoomId === payload.chatRoomId)
-        ?.users.find((user) => user.id === payload.forUserId)?.socketId;
-      socket.to(socketId).emit("receiveIceCandidate", {
-        iceCandidate: payload.iceCandidate,
-        userId: userId,
-      });
-    }
+    safe(
+      "sendIceCandidate",
+      async (payload: {
+        iceCandidate: any;
+        chatRoomId: string;
+        forUserId: string;
+      }) => {
+        console.log("sendIceCandidate");
+        const chatRoom = findVoiceRoom(payload?.chatRoomId);
+        if (!isInVoiceRoom(chatRoom, socket.id)) {
+          return;
+        }
+        const socketId = chatRoom.users.find(
+          (user) => user.id === payload.forUserId
+        )?.socketId;
+        if (!socketId) {
+          return;
+        }
+        socket.to(socketId).emit("receiveIceCandidate", {
+          iceCandidate: payload.iceCandidate,
+          userId: userId,
+        });
+      }
+    )
   );
 
   socket.on(
     "sendIceCandidateToTheOferrer",
-    async (payload: {
-      iceCandidate: any;
-      chatRoomId: string;
-      toSocketId: string;
-    }) => {
-      console.log("sendIceCandidateToTheOferrer");
-      const userId = await getUserId(socket.handshake.auth.token);
-      socket.to(payload.toSocketId).emit("receiveIceCandidate", {
-        iceCandidate: payload.iceCandidate,
-        userId: userId,
-      });
-    }
+    safe(
+      "sendIceCandidateToTheOferrer",
+      async (payload: {
+        iceCandidate: any;
+        chatRoomId: string;
+        toSocketId: string;
+      }) => {
+        console.log("sendIceCandidateToTheOferrer");
+        if (!shareVoiceRoom(socket.id, payload?.toSocketId)) {
+          return;
+        }
+        socket.to(payload.toSocketId).emit("receiveIceCandidate", {
+          iceCandidate: payload.iceCandidate,
+          userId: userId,
+        });
+      }
+    )
   );
 
   socket.on(
     "sendOffer",
-    async (payload: { offer: any; chatRoomId: string; forUserId: string }) => {
-      console.log("sendOffer");
-      const userId = await getUserId(socket.handshake.auth.token);
-      const socketId = chatRooms
-        .find((chatRoom) => chatRoom.chatRoomId === payload.chatRoomId)
-        ?.users.find((user) => user.id === payload.forUserId)?.socketId;
-      socket.to(socketId).emit("receiveOffer", {
-        offer: payload.offer,
-        socketId: socket.id,
-        userId: userId,
-      });
-    }
+    safe(
+      "sendOffer",
+      async (payload: { offer: any; chatRoomId: string; forUserId: string }) => {
+        console.log("sendOffer");
+        const chatRoom = findVoiceRoom(payload?.chatRoomId);
+        if (!isInVoiceRoom(chatRoom, socket.id)) {
+          return;
+        }
+        const socketId = chatRoom.users.find(
+          (user) => user.id === payload.forUserId
+        )?.socketId;
+        if (!socketId) {
+          return;
+        }
+        socket.to(socketId).emit("receiveOffer", {
+          offer: payload.offer,
+          socketId: socket.id,
+          userId: userId,
+        });
+      }
+    )
   );
 
   socket.on(
     "sendAnswer",
-    async (payload: { answer: any; toSocketId: string }) => {
+    safe("sendAnswer", async (payload: { answer: any; toSocketId: string }) => {
       console.log("sendAnswer");
-      const userId = await getUserId(socket.handshake.auth.token);
+      if (!shareVoiceRoom(socket.id, payload?.toSocketId)) {
+        return;
+      }
       socket.to(payload.toSocketId).emit("receiveAnswer", {
         answer: payload.answer,
         socketId: socket.id,
         userId: userId,
       });
-    }
+    })
   );
 
   socket.on("disconnect", () => {
@@ -281,8 +338,33 @@ io.on("connection", (socket) => {
 
   socket.on(
     "kickUser",
-    async (payload: { chatRoomId: string; userId: string }) => {
-      io.in(payload.chatRoomId).emit("userKicked", { userId: payload.userId });
-    }
+    safe("kickUser", async (payload: { chatRoomId: string; userId: string }) => {
+      const chatRoomId = payload?.chatRoomId;
+      const kickedUserId = payload?.userId;
+      // Only the room owner can kick (the REST call removes the membership)
+      if (
+        typeof kickedUserId !== "string" ||
+        !(await isChatRoomOwnerPersistence({ chatRoomId, userId }))
+      ) {
+        return;
+      }
+      io.in(chatRoomId).emit("userKicked", { userId: kickedUserId });
+
+      // Stop delivering the room's messages and calls to the kicked user
+      const roomSockets = await io.in(chatRoomId).fetchSockets();
+      for (const roomSocket of roomSockets) {
+        if (roomSocket.data.userId === kickedUserId) {
+          roomSocket.leave(chatRoomId);
+          roomSocket.leave(chatRoomId + "-voice");
+        }
+      }
+      const voiceRoom = findVoiceRoom(chatRoomId);
+      if (voiceRoom?.users.some((user) => user.id === kickedUserId)) {
+        voiceRoom.users = voiceRoom.users.filter(
+          (user) => user.id !== kickedUserId
+        );
+        io.in(chatRoomId + "-voice").emit("userLeftVoiceRoom", voiceRoom.users);
+      }
+    })
   );
 });

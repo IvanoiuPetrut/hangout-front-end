@@ -396,7 +396,58 @@ async function deleteChatRoomPersistence({ userId, chatRoomId }) {
   });
 }
 
+// The user's public details if they are a member of the chat room, else null
+async function getChatRoomMemberPersistence({
+  chatRoomId,
+  userId,
+}: {
+  chatRoomId: string;
+  userId: string;
+}) {
+  // An undefined value would drop the filter in Prisma, so only accept strings
+  if (typeof chatRoomId !== "string" || typeof userId !== "string") {
+    return null;
+  }
+  return prisma.user.findFirst({
+    where: {
+      id: userId,
+      chatRooms: {
+        some: {
+          id: chatRoomId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      username: true,
+      photo: true,
+    },
+  });
+}
+
+async function isChatRoomOwnerPersistence({
+  chatRoomId,
+  userId,
+}: {
+  chatRoomId: string;
+  userId: string;
+}): Promise<boolean> {
+  if (typeof chatRoomId !== "string" || typeof userId !== "string") {
+    return false;
+  }
+  const chatRoom = await prisma.chatRoom.findFirst({
+    where: {
+      id: chatRoomId,
+      ownerId: userId,
+    },
+    select: { id: true },
+  });
+  return chatRoom !== null;
+}
+
 export {
+  getChatRoomMemberPersistence,
+  isChatRoomOwnerPersistence,
   createChatRoomPersistence,
   getJoinedRoomsPersistence,
   sendInviteToRoomPersistence,

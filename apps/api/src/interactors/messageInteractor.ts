@@ -1,11 +1,10 @@
 async function createMessageInteractor(
   { createMessagePersistence },
-  { senderId, receiverId, senderPhoto, chatRoomId, content }
+  { senderId, receiverId, chatRoomId, content }
 ) {
   const message = await createMessagePersistence({
     senderId,
     receiverId,
-    senderPhoto,
     chatRoomId,
     content,
   });

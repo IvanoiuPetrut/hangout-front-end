@@ -67,7 +67,6 @@ async function getMessagesFromFriendChatRoom(
 async function createMessage(
   senderId: string,
   receiverId: string,
-  senderPhoto: string,
   chatRoomId: string,
   content: string
 ) {
@@ -79,7 +78,7 @@ async function createMessage(
 
     const message = await createMessageInteractor(
       { createMessagePersistence },
-      { senderId, receiverId, senderPhoto, chatRoomId, content }
+      { senderId, receiverId, chatRoomId, content }
     );
     return message;
   } catch (error) {

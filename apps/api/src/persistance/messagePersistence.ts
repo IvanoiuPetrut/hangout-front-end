@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function createMessagePersistence({
   senderId,
   receiverId,
-  senderPhoto,
   chatRoomId,
   content,
 }) {
@@ -17,8 +16,11 @@ async function createMessagePersistence({
     },
     select: {
       username: true,
+      photo: true,
     },
   });
+  // Taken from the sender's profile rather than the client, so it can't be spoofed
+  const senderPhoto = user.photo ?? "";
 
   if (chatRoomId) {
     data = {

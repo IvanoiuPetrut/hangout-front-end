@@ -127,7 +127,29 @@ async function deleteFriendPersistence(userId, friendId) {
   });
 }
 
+async function areFriendsPersistence({
+  userId,
+  friendId,
+}: {
+  userId: string;
+  friendId: string;
+}): Promise<boolean> {
+  // An undefined value would drop the filter in Prisma, so only accept strings
+  if (typeof userId !== "string" || typeof friendId !== "string") {
+    return false;
+  }
+  const friend = await prisma.friends.findFirst({
+    where: {
+      userId,
+      friendId,
+    },
+    select: { id: true },
+  });
+  return friend !== null;
+}
+
 export {
+  areFriendsPersistence,
   createFriendRequestPersistence,
   getFriendRequestPersistence,
   getPendingFriendRequestPersistence,
