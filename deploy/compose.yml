@@ -1,0 +1,39 @@
+# Production stack. The deploy workflow copies this file to ~/apps/hangout on the VPS,
+# where Traefik routes hangout.petrut.dev to the web container. JWT_SECRET lives in the .env next to it.
+name: hangout
+
+services:
+  api:
+    image: ghcr.io/ivanoiupetrut/hangout-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    # Forwards stop signals to node so the container shuts down promptly
+    init: true
+    environment:
+      DATABASE_URL: file:/data/hangout.db
+      UPLOADS_DIR: /data/uploads
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+    volumes:
+      - api-data:/data
+
+  web:
+    image: ghcr.io/ivanoiupetrut/hangout-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - api
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hangout.rule=Host(`hangout.petrut.dev`)
+      - traefik.http.routers.hangout.entrypoints=websecure
+      - traefik.http.routers.hangout.tls.certresolver=letsencrypt
+      - traefik.http.services.hangout.loadbalancer.server.port=80
+    # default reaches the api, proxy is where Traefik reaches web
+    networks:
+      - default
+      - proxy
+
+volumes:
+  api-data:
+
+networks:
+  proxy:
+    external: true
