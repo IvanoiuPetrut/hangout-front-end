@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import multer from "multer";
 import { authRouter } from "./routes/authRoute.js";
 import { userRouter } from "./routes/userRoute.js";
@@ -33,21 +32,8 @@ import fs from "fs";
 const app = express();
 const port = process.env.PORT || 3000;
 
-// const whitelist = ["http://localhost:5173"];
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-// };
-
-// app.use(cors(corsOptions));
-
-app.use(cors());
+// No CORS headers: browsers only reach the API through the app's own origin
+// (nginx in production, the Vite dev server proxy in development)
 app.use(express.json());
 app.use("/auth", authRouter);
 // Public so <img>/<video> tags can load them; file names are random UUIDs
@@ -91,11 +77,8 @@ server.listen(port, () => {
   console.log(`Server listening at http://localhost:${port} :)`);
 });
 
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+// Same origin only, like the REST API (Socket.IO sends no CORS headers by default)
+const io = new Server(server);
 
 io.use(async (socket, next) => {
   const token = socket.handshake.auth.token;
