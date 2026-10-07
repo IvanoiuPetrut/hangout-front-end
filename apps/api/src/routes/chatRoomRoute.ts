@@ -32,10 +32,6 @@ router.get(
   "/rooms-where-user-is-not-member/:userId",
   getRoomsWhereUserIsNotMember
 );
-router.get("/test/:userId", (req, res) => {
-  const userId = req.params.userId;
-  res.json({ message: "Hello from chat room route", userId });
-});
 router.post("/kick-user", kickUser);
 router.post("/delete/:chatRoomId", deleteChatRoom);
 router.post("/leave/:chatRoomId", leaveChatRoom);

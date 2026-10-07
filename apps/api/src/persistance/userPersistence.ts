@@ -47,14 +47,14 @@ async function getUserByIdPersistence({ id }: GetUserByIdPersistenceArgs) {
 }
 
 async function getUserDetailsPersistence({ id }) {
-  let user;
-  user = await prisma.user.findUnique({
+  // Accounts are only created by /auth/register, never as a side effect here
+  const user = await prisma.user.findUnique({
     where: {
       id,
     },
   });
   if (!user) {
-    user = createUserPersistence({ id, username: id });
+    throw new Error("User not found");
   }
   return user;
 }

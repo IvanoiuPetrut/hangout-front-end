@@ -3,6 +3,16 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function createFriendRequestPersistence({ senderId, receiverId }) {
+  if (senderId === receiverId) {
+    throw new Error("You can't send a friend request to yourself");
+  }
+  const receiver = await prisma.user.findUnique({
+    where: { id: receiverId },
+    select: { id: true },
+  });
+  if (!receiver) {
+    throw new Error("User not found");
+  }
   const friendRequest = await prisma.friendRequests.create({
     data: {
       from: senderId,
@@ -32,15 +42,20 @@ async function getPendingFriendRequestPersistence({ userId }) {
 }
 
 async function acceptFriendRequestPersistence({ senderId, receiverId }) {
-  await prisma.friendRequests.updateMany({
+  // Only a pending request sent to this user can be accepted
+  const { count } = await prisma.friendRequests.updateMany({
     where: {
       from: senderId,
       to: receiverId,
+      status: "pending",
     },
     data: {
       status: "accepted",
     },
   });
+  if (count === 0) {
+    throw new Error("Friend request not found");
+  }
   const receiverFriendRelation = await prisma.friends.create({
     data: {
       User: {

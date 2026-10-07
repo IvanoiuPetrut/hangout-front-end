@@ -5,7 +5,6 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 import {
-  createUser,
   getUserById,
   getUserDetails,
   updateUserDetails,
@@ -13,7 +12,6 @@ import {
   createProfilePicture,
 } from "../controllers/userController.js";
 
-router.post("/create", createUser);
 router.get("/id/:id", getUserById);
 router.get("/details", getUserDetails);
 router.get("/users", getUsers);

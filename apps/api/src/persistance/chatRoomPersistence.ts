@@ -95,10 +95,12 @@ async function getInvitesPersistence({ userId }) {
 }
 
 async function acceptInvitePersistence({ userId, inviteId }) {
+  // Only pending invites, so an old invite can't be reused to rejoin after a kick
   const invite = await prisma.chatRoomInvites.findFirst({
     where: {
       id: inviteId,
       toUserId: userId,
+      status: "pending",
     },
   });
 
@@ -134,6 +136,7 @@ async function rejectInvitePersistence({ userId, inviteId }) {
     where: {
       id: inviteId,
       toUserId: userId,
+      status: "pending",
     },
   });
 

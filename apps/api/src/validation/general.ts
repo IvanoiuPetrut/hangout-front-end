@@ -18,4 +18,13 @@ function validateRoomName(roomName: string): void {
   }
 }
 
-export { validateUuid, validateRoomName };
+function validateRoomDescription(description: unknown): void {
+  if (typeof description !== "string") {
+    throw new Error("Room description is required");
+  }
+  if (description.length > 500) {
+    throw new Error("Room description is too long");
+  }
+}
+
+export { validateUuid, validateRoomName, validateRoomDescription };

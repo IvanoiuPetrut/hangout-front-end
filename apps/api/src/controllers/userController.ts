@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
 import {
-  validateUser,
   validateUserId,
   validateUserCode,
   validateUsername,
 } from "../validation/user.js";
 
 import {
-  createUserInteractor,
   getUserByIdInteractor,
   getUserDetailsInteractor,
   updateUserDetailsInteractor,
@@ -17,7 +15,6 @@ import {
 
 import {
   UserDto,
-  createUserPersistence,
   getUserByIdPersistence,
   getUserDetailsPersistence,
   updateUserDetailsPersistence,
@@ -26,24 +23,8 @@ import {
 } from "../persistance/userPersistence.js";
 
 import { getUserId } from "../middleware/verifyUser.js";
+import { validateRegisterUsername } from "../validation/auth.js";
 import { UploadQuotaError } from "../storage/fileStorage.js";
-
-async function createUser(req: Request, res: Response): Promise<void> {
-  const { id, username } = req.body;
-
-  try {
-    validateUser(id, username);
-
-    const user = await createUserInteractor(
-      { createUserPersistence },
-      { id, username }
-    );
-
-    res.json(user);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-}
 
 async function getUserById(req: Request, res: Response): Promise<void> {
   console.log("getUserById");
@@ -86,7 +67,8 @@ async function updateUserDetails(req: Request, res: Response): Promise<void> {
   const id = await getUserId(accessToken);
 
   try {
-    validateUsername(username);
+    // Same rules as at registration
+    validateRegisterUsername(username);
 
     const user = await updateUserDetailsInteractor(
       { updateUserDetailsPersistence },
@@ -94,6 +76,10 @@ async function updateUserDetails(req: Request, res: Response): Promise<void> {
     );
     res.json(user);
   } catch (error) {
+    if (error?.code === "P2002") {
+      res.status(409).json({ message: "Username is already taken" });
+      return;
+    }
     console.log(error.message);
     res.status(400).json({ message: error.message });
   }
@@ -143,7 +129,6 @@ async function createProfilePicture(req: Request, res: Response): Promise<any> {
 }
 
 export {
-  createUser,
   getUserById,
   getUserDetails,
   updateUserDetails,

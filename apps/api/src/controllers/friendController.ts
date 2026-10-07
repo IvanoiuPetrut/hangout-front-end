@@ -147,7 +147,10 @@ async function deleteFriend(req: Request, res: Response): Promise<void> {
   const userId = await getUserId(req.headers["access-token"]);
 
   try {
-    const friendRequest = deleteFriendPersistence(userId, id);
+    validateUserId(userId);
+    validateUserId(id);
+
+    const friendRequest = await deleteFriendPersistence(userId, id);
 
     res.json(friendRequest);
   } catch (error) {

@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { getUserId } from "../middleware/verifyUser.js";
 import { validateUserId } from "../validation/user.js";
-import { validateRoomName } from "../validation/general.js";
+import {
+  validateRoomName,
+  validateRoomDescription,
+} from "../validation/general.js";
 
 import {
   createChatRoomInteractor,
@@ -267,6 +270,7 @@ async function editChatRoomDescription(
   try {
     validateUserId(userId);
     validateUserId(chatRoomId);
+    validateRoomDescription(description);
 
     const chatRoom = await editChatRoomDescriptionPersistence({
       userId,
