@@ -1,45 +1,47 @@
 <a href="#">
-    <img src="https://i.postimg.cc/Bv6Cnp9z/group.png" alt="Weather app logo" align="right" height="60" />
+    <img src="https://i.postimg.cc/Bv6Cnp9z/group.png" alt="Hangout logo" align="right" height="60" />
 </a>
 
 # Hangout
 
 Hangout is web app that allows you to communicate with other persons, either thorough a direct message chat or by using an audio video channel, leveraging peer to peer connection. It also supports messages with media conent, markdown and code.
 
-<a href="https://github.com/IvanoiuPetrut/hangout-backend">Back-end repository</a>
-
 <a href="https://www.youtube.com/watch?v=HNb0TTiL960">Hangout Demo</a>
 
-<p align="center">
-  <img src="https://i.postimg.cc/Y0rTqW3C/image-mare.png" alt="Photo of the presentation of the project"/>
-  <img src="https://i.postimg.cc/xTFBnqb9/imageaudiovideo.png" alt="Photo of the presentation of the project"/>
-</p>
+## Repository layout
 
-## Features
+This is an npm workspaces monorepo:
 
-- Login and register using AWS Cognito
-- Change user name and photo
-- Add/Remove friends
-- Chat with friends by using:
-    - Plain text
-    - Media files
-    - Code snipets
-- Create chat rooms
-- Manage chat rooms
-- Comunicate with other users through an audio video channel
-    - Connection is done peer to peer by using WebRTC protocol
+- [`apps/web`](apps/web) – front-end (Vue 3, TypeScript, Pinia, Tailwind + DaisyUI)
+- [`apps/api`](apps/api) – back-end (Express, Socket.IO, Prisma)
 
-## Technologies
+## Development
 
-- Vue 3 - Composition API
-- TypeScript
-- Pinia
-- Vue Router
-- Tailwind + DaisyUI
-- AWS Services: Cognito, S3, Amplify
+1. `npm install` – install dependencies for all apps
+2. `cp apps/api/.env.example apps/api/.env` and fill in `JWT_SECRET`
+3. `cd apps/api && npx prisma migrate deploy` – create the SQLite database
+4. `npm run dev` – run front-end (http://localhost:5173) and back-end together
 
-## Build process
+Other scripts:
 
-- `npm install` (to install dependencies)
-- `npm run dev` (to run the app)
-- `npm build` (for production)
+- `npm run dev:web` / `npm run dev:api` – run a single app
+- `npm run build` – build all apps
+- `npm test` – run front-end unit tests
+
+The front-end talks to the API through relative paths (`/api`, `/socket.io`, `/uploads`). In development Vite proxies them to `http://localhost:3000` (override with `API_PROXY_TARGET`); in production nginx does.
+
+## Deployment
+
+Everything runs with Docker Compose: nginx serves the front-end and proxies to the API, and the SQLite database plus uploaded files live in the `api-data` volume.
+
+```
+cp .env.example .env   # fill in JWT_SECRET
+docker compose up -d --build
+```
+
+Database migrations run automatically when the API container starts.
+
+## Accounts and uploads
+
+- Users register and log in with a username and password. Passwords are hashed with scrypt and the API issues a JWT valid for 7 days.
+- Uploaded files are stored on disk (`UPLOADS_DIR`). Once the folder reaches 3 GB (`UPLOADS_MAX_BYTES`), further uploads are rejected. Single files are limited to 10 MB.
