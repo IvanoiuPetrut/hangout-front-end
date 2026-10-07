@@ -1,3 +1,4 @@
+import path from "path";
 import validator from "validator";
 
 function validateUsername(username: string): void {
@@ -23,4 +24,34 @@ function validateUserCode(code: string): void {
   }
 }
 
-export { validateUser, validateUserId, validateUserCode, validateUsername };
+// Same formats the settings page offers; the extension decides the
+// Content-Type the file is later served with
+const PROFILE_PICTURE_EXTENSIONS = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".webp",
+  ".bmp",
+];
+
+function validateProfilePicture(file: {
+  originalname: string;
+  mimetype: string;
+}): void {
+  const extension = path.extname(file.originalname).toLowerCase();
+  if (
+    !PROFILE_PICTURE_EXTENSIONS.includes(extension) ||
+    !file.mimetype.startsWith("image/")
+  ) {
+    throw new Error("Profile picture must be a PNG, JPG, GIF, WEBP or BMP image");
+  }
+}
+
+export {
+  validateUser,
+  validateUserId,
+  validateUserCode,
+  validateUsername,
+  validateProfilePicture,
+};

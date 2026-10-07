@@ -4,6 +4,7 @@ import {
   validateUserId,
   validateUserCode,
   validateUsername,
+  validateProfilePicture,
 } from "../validation/user.js";
 
 import {
@@ -116,6 +117,8 @@ async function createProfilePicture(req: Request, res: Response): Promise<any> {
   const file = req.file;
 
   try {
+    validateProfilePicture(file);
+
     const user = await updateUserProfilePictureInteractor(
       { updateUserProfilePicturePersistence },
       { userId, file }

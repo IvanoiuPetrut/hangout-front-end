@@ -28,6 +28,7 @@ import { Server, Socket } from "socket.io";
 import http from "http";
 import https from "https";
 import fs from "fs";
+import path from "path";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -42,11 +43,33 @@ app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 2));
 // (nginx in production, the Vite dev server proxy in development)
 app.use(express.json());
 app.use("/auth", authRouter);
+// Files the chat shows inline; anything else is served as a download
+const INLINE_UPLOAD_EXTENSIONS = new Set([
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".webp",
+  ".bmp",
+  ".avif",
+  ".svg",
+  ".mp4",
+  ".webm",
+  ".ogg",
+  ".mov",
+  ".avi",
+  ".flv",
+  ".mp3",
+  ".wav",
+  ".m4a",
+]);
+
 // Public so <img>/<video> tags can load them; file names are random UUIDs
 app.use(
   "/uploads",
   express.static(UPLOADS_DIR, {
-    setHeaders: (res) => {
+    index: false,
+    setHeaders: (res, filePath) => {
       // Uploads are served from the app's own origin, so never let an
       // uploaded HTML/SVG file run scripts there
       res.setHeader(
@@ -54,6 +77,10 @@ app.use(
         "sandbox; default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'"
       );
       res.setHeader("X-Content-Type-Options", "nosniff");
+      res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+      if (!INLINE_UPLOAD_EXTENSIONS.has(path.extname(filePath).toLowerCase())) {
+        res.setHeader("Content-Disposition", "attachment");
+      }
     },
   })
 );
